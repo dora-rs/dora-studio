@@ -57,7 +57,9 @@ impl SigNozBackend {
             .default_headers(default_headers)
             .timeout(std::time::Duration::from_secs(config.timeout_secs))
             .build()
-            .map_err(|e| OtlpError::ConnectionFailed(format!("failed to build HTTP client: {}", e)))?;
+            .map_err(|e| {
+                OtlpError::ConnectionFailed(format!("failed to build HTTP client: {}", e))
+            })?;
 
         Ok(Self { config, client })
     }
@@ -182,7 +184,7 @@ impl SigNozBackend {
                         operation_name: json_str(data, "name"),
                         start_time_ms: data
                             .get("timestamp")
-                            .and_then(|v| parse_timestamp(v))
+                            .and_then(parse_timestamp)
                             .or_else(|| row.timestamp.as_deref().and_then(parse_iso8601_to_ms))
                             .unwrap_or(0),
                         duration_ms: data
@@ -190,10 +192,8 @@ impl SigNozBackend {
                             .and_then(|v| v.as_f64())
                             .map(|n| (n / 1_000_000.0) as u64)
                             .unwrap_or(0),
-                        status_code: data
-                            .get("statusCode")
-                            .and_then(|v| v.as_i64())
-                            .unwrap_or(0) as i32,
+                        status_code: data.get("statusCode").and_then(|v| v.as_i64()).unwrap_or(0)
+                            as i32,
                         has_error: data
                             .get("hasError")
                             .and_then(|v| v.as_bool())
@@ -221,7 +221,7 @@ impl SigNozBackend {
                     let log = LogEntry {
                         timestamp_ms: data
                             .get("timestamp")
-                            .and_then(|v| parse_timestamp(v))
+                            .and_then(parse_timestamp)
                             .or_else(|| row.timestamp.as_deref().and_then(parse_iso8601_to_ms))
                             .unwrap_or(0),
                         severity: json_str(data, "severity_text"),
@@ -256,16 +256,8 @@ impl SigNozBackend {
                         .collect();
 
                     let metric = MetricSeries {
-                        metric_name: ts
-                            .labels
-                            .get("__name__")
-                            .cloned()
-                            .unwrap_or_default(),
-                        service_name: ts
-                            .labels
-                            .get("service_name")
-                            .cloned()
-                            .unwrap_or_default(),
+                        metric_name: ts.labels.get("__name__").cloned().unwrap_or_default(),
+                        service_name: ts.labels.get("service_name").cloned().unwrap_or_default(),
                         labels: ts.labels.clone(),
                         points,
                     };
@@ -397,15 +389,11 @@ fn parse_iso8601_to_ms(s: &str) -> Option<u64> {
     // Expected: "YYYY-MM-DDTHH:MM:SS[.frac]Z"
     let s = s.trim();
     let (date_part, time_part) = s.split_once('T')?;
-    let time_part = time_part.strip_suffix('Z')
-        .or_else(|| {
-            // Handle +00:00 offset
-            if time_part.ends_with("+00:00") {
-                Some(&time_part[..time_part.len() - 6])
-            } else {
-                Some(time_part)
-            }
-        })?;
+    // Handle +00:00 offset
+    let time_part = time_part
+        .strip_suffix('Z')
+        .or_else(|| time_part.strip_suffix("+00:00"))
+        .or(Some(time_part))?;
 
     let mut date_iter = date_part.splitn(3, '-');
     let year: i64 = date_iter.next()?.parse().ok()?;
@@ -671,10 +659,7 @@ mod tests {
 
     #[test]
     fn test_parse_iso8601_epoch() {
-        assert_eq!(
-            parse_iso8601_to_ms("1970-01-01T00:00:00Z"),
-            Some(0)
-        );
+        assert_eq!(parse_iso8601_to_ms("1970-01-01T00:00:00Z"), Some(0));
     }
 
     #[test]

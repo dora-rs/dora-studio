@@ -6,9 +6,8 @@ pub mod signoz;
 pub mod types;
 
 pub use bridge::{
-    init_signoz_from_env, is_signoz_configured, get_connection_status,
-    request_health_check, request_traces, take_signoz_responses,
-    SignozResponse, ConnectionStatus,
+    get_connection_status, init_signoz_from_env, is_signoz_configured, request_health_check,
+    request_traces, take_signoz_responses, ConnectionStatus, SignozResponse,
 };
 pub use config::{AuthMethod, BackendConfig, SigNozConfig};
 pub use error::OtlpError;

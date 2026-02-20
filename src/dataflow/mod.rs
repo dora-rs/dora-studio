@@ -1,11 +1,7 @@
 pub mod dataflow_table;
 
 pub use dataflow_table::{
-    DataflowInfo,
-    DataflowTable,
-    DataflowTableAction,
-    DataflowTableRef,
-    DataflowTableWidgetRefExt,
+    DataflowInfo, DataflowTable, DataflowTableAction, DataflowTableRef, DataflowTableWidgetRefExt,
     TableLoadingState,
 };
 

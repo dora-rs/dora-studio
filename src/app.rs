@@ -1,6 +1,6 @@
-use makepad_widgets::*;
 use crate::dataflow::{DataflowInfo, DataflowTableWidgetRefExt};
 use crate::tools::execute_tool;
+use makepad_widgets::*;
 
 #[cfg(not(target_arch = "wasm32"))]
 use crate::otlp::bridge;
@@ -277,7 +277,8 @@ impl AppMain for App {
                             log!("[App] Auto-refresh triggered after {:.1}s", elapsed);
                             self.refresh_dataflows(cx);
                         }
-                        ActivePanel::Traces => {
+                        ActivePanel::Traces =>
+                        {
                             #[cfg(not(target_arch = "wasm32"))]
                             if self.signoz_available {
                                 log!("[App] Auto-refresh traces after {:.1}s", elapsed);
@@ -337,7 +338,11 @@ impl App {
 
         // Execute dora list command
         let result = execute_tool("dora_list", "refresh", &serde_json::json!({}));
-        log!("[App] dora_list result: is_error={}, content={}", result.is_error, &result.content);
+        log!(
+            "[App] dora_list result: is_error={}, content={}",
+            result.is_error,
+            &result.content
+        );
 
         if result.is_error {
             table.set_error(cx, &result.content);
@@ -360,8 +365,10 @@ impl App {
         let panel = self.ui.traces_panel(ids!(traces_panel));
         panel.set_loading(cx);
 
-        let mut query = crate::otlp::types::TraceQuery::default();
-        query.limit = Some(100);
+        let query = crate::otlp::types::TraceQuery {
+            limit: Some(100),
+            ..Default::default()
+        };
         bridge::request_traces(query);
     }
 
@@ -378,9 +385,7 @@ impl App {
             crate::otlp::SignozResponse::HealthError(e) => {
                 log!("[App] SigNoz health error: {}", e);
                 let msg = format!("SigNoz: {}", truncate_str(&e, 40));
-                self.ui
-                    .label(ids!(connection_label))
-                    .set_text(cx, &msg);
+                self.ui.label(ids!(connection_label)).set_text(cx, &msg);
             }
             crate::otlp::SignozResponse::Traces(spans) => {
                 log!("[App] Received {} trace spans", spans.len());

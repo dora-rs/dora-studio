@@ -2,9 +2,9 @@
 //!
 //! Tests that verify multiple components working together.
 
+mod app_tests;
 mod client_tests;
 mod storage_tests;
-mod app_tests;
 
 // Re-export test utilities
 pub use super::fixtures::*;

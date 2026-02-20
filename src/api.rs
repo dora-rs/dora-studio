@@ -156,11 +156,14 @@ pub fn start_api_runtime() {
                 eprintln!("[API] Received request with {} messages", messages.len());
                 eprintln!("[API] API key length: {}", get_api_key().len());
                 let response = call_claude_api_with_tools(messages).await;
-                eprintln!("[API] Got response: {:?}", match &response {
-                    ChatResponse::Message(s) => format!("Message({} chars)", s.len()),
-                    ChatResponse::ToolExecution(s) => format!("Tool: {}", s),
-                    ChatResponse::Error(e) => format!("Error: {}", e),
-                });
+                eprintln!(
+                    "[API] Got response: {:?}",
+                    match &response {
+                        ChatResponse::Message(s) => format!("Message({} chars)", s.len()),
+                        ChatResponse::ToolExecution(s) => format!("Tool: {}", s),
+                        ChatResponse::Error(e) => format!("Error: {}", e),
+                    }
+                );
                 // Store response for polling instead of post_action
                 *PENDING_RESPONSE.lock().unwrap() = Some(response);
                 eprintln!("[API] Response stored for polling");

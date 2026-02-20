@@ -4,8 +4,8 @@ use tokio::runtime::Runtime;
 use tokio::sync::mpsc::{unbounded_channel, UnboundedSender};
 
 use crate::otlp::config::{AuthMethod, BackendConfig, SigNozConfig};
-use crate::otlp::types::{Span, TraceQuery};
 use crate::otlp::create_backend;
+use crate::otlp::types::{Span, TraceQuery};
 
 // ---------------------------------------------------------------------------
 // Types
@@ -218,37 +218,28 @@ pub fn init_signoz_from_env() -> bool {
             eprintln!("[SigNoz] Runtime started, waiting for requests...");
             while let Some(request) = receiver.recv().await {
                 match request {
-                    SignozRequest::HealthCheck => {
-                        match client.health_check().await {
-                            Ok(()) => {
-                                eprintln!("[SigNoz] Health check OK");
-                                *SIGNOZ_CONNECTION_STATUS.lock().unwrap() =
-                                    ConnectionStatus::Connected;
-                                push_response(SignozResponse::HealthOk);
-                            }
-                            Err(e) => {
-                                eprintln!("[SigNoz] Health check failed: {}", e);
-                                *SIGNOZ_CONNECTION_STATUS.lock().unwrap() =
-                                    ConnectionStatus::Error;
-                                push_response(SignozResponse::HealthError(format!("{}", e)));
-                            }
+                    SignozRequest::HealthCheck => match client.health_check().await {
+                        Ok(()) => {
+                            eprintln!("[SigNoz] Health check OK");
+                            *SIGNOZ_CONNECTION_STATUS.lock().unwrap() = ConnectionStatus::Connected;
+                            push_response(SignozResponse::HealthOk);
                         }
-                    }
-                    SignozRequest::QueryTraces(query) => {
-                        match client.query_traces(&query).await {
-                            Ok(result) => {
-                                eprintln!(
-                                    "[SigNoz] Query returned {} spans",
-                                    result.items.len()
-                                );
-                                push_response(SignozResponse::Traces(result.items));
-                            }
-                            Err(e) => {
-                                eprintln!("[SigNoz] Query failed: {}", e);
-                                push_response(SignozResponse::TracesError(format!("{}", e)));
-                            }
+                        Err(e) => {
+                            eprintln!("[SigNoz] Health check failed: {}", e);
+                            *SIGNOZ_CONNECTION_STATUS.lock().unwrap() = ConnectionStatus::Error;
+                            push_response(SignozResponse::HealthError(format!("{}", e)));
                         }
-                    }
+                    },
+                    SignozRequest::QueryTraces(query) => match client.query_traces(&query).await {
+                        Ok(result) => {
+                            eprintln!("[SigNoz] Query returned {} spans", result.items.len());
+                            push_response(SignozResponse::Traces(result.items));
+                        }
+                        Err(e) => {
+                            eprintln!("[SigNoz] Query failed: {}", e);
+                            push_response(SignozResponse::TracesError(format!("{}", e)));
+                        }
+                    },
                 }
             }
         });

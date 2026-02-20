@@ -30,10 +30,10 @@
 //! - [TEST_PLAN.md](../TEST_PLAN.md) - Comprehensive test specifications
 //! - [ISSUES.md](../ISSUES.md) - Trackable issues with test criteria
 
-pub mod mocks;
+pub mod e2e;
 pub mod fixtures;
 pub mod integration;
-pub mod e2e;
+pub mod mocks;
 
 // Re-export commonly used items
 pub use fixtures::*;

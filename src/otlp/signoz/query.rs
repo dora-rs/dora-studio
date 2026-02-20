@@ -1,4 +1,4 @@
-use crate::otlp::types::{LogQuery, MetricQuery, TraceQuery, TimeRange};
+use crate::otlp::types::{LogQuery, MetricQuery, TimeRange, TraceQuery};
 
 /// Default time range: last 1 hour.
 fn default_time_range() -> TimeRange {
@@ -180,10 +180,7 @@ pub fn build_metric_query(query: &MetricQuery) -> serde_json::Value {
     let step = query.step_seconds.unwrap_or(60);
     let aggregation = query.aggregation.as_deref().unwrap_or("avg");
 
-    let metric_name = query
-        .metric_name
-        .as_deref()
-        .unwrap_or("signoz_calls_total");
+    let metric_name = query.metric_name.as_deref().unwrap_or("signoz_calls_total");
 
     let mut filters = Vec::new();
 

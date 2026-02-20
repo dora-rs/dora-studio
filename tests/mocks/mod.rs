@@ -42,7 +42,12 @@ impl MockDoraClient {
     }
 
     pub fn call_count(&self, method: &str) -> usize {
-        self.call_log.lock().unwrap().iter().filter(|m| *m == method).count()
+        self.call_log
+            .lock()
+            .unwrap()
+            .iter()
+            .filter(|m| *m == method)
+            .count()
     }
 
     fn log_call(&self, method: &str) {
