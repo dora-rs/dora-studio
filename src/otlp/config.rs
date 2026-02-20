@@ -5,24 +5,33 @@ use serde::{Deserialize, Serialize};
 #[serde(tag = "type")]
 pub enum AuthMethod {
     #[serde(rename = "api_key")]
+    /// Authenticate using a specific header and key
     ApiKey {
+        /// The name of the HTTP header (e.g., "X-API-KEY")
         header_name: String,
+        /// The API key value
         key: String,
     },
     #[serde(rename = "bearer_token")]
+    /// Authenticate using a Bearer token
     BearerToken {
+        /// The token string
         token: String,
     },
     #[serde(rename = "none")]
+    /// No authentication
     None,
 }
 
 /// Configuration for a SigNoz backend.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct SigNozConfig {
+    /// The base URL of the SigNoz instance (e.g., "http://localhost:8080")
     pub base_url: String,
+    /// The authentication method to use
     pub auth: AuthMethod,
     #[serde(default = "default_timeout")]
+    /// Request timeout in seconds (default: 30)
     pub timeout_secs: u64,
 }
 
@@ -35,6 +44,7 @@ fn default_timeout() -> u64 {
 #[serde(tag = "backend")]
 pub enum BackendConfig {
     #[serde(rename = "signoz")]
+    /// Configuration for SigNoz
     SigNoz(SigNozConfig),
 }
 

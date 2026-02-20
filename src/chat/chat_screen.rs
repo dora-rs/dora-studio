@@ -138,6 +138,9 @@ live_design! {
     }
 }
 
+/// The main chat interface widget.
+///
+/// Handles message display, input, and interaction with the AI backend.
 #[derive(Live, LiveHook, Widget)]
 pub struct ChatScreen {
     #[deref] view: View,
@@ -184,6 +187,7 @@ impl Widget for ChatScreen {
 }
 
 impl WidgetMatchEvent for ChatScreen {
+    /// Handle UI actions like button clicks and text input submission
     fn handle_actions(&mut self, cx: &mut Cx, actions: &Actions, _scope: &mut Scope) {
         if self.view.button(ids!(send_button)).clicked(&actions) {
             self.send_message(cx);
@@ -201,6 +205,7 @@ impl WidgetMatchEvent for ChatScreen {
 }
 
 impl ChatScreen {
+    /// Render messages into the PortalList
     fn draw_messages(&mut self, cx: &mut Cx2d, list: &mut RefMut<PortalList>) {
         // Calculate total items: messages + loading indicator if loading
         let item_count = self.messages.len() + if self.is_loading { 1 } else { 0 };
@@ -227,6 +232,7 @@ impl ChatScreen {
         }
     }
 
+    /// Update status labels and trigger a redraw
     fn update_display(&mut self, cx: &mut Cx) {
         // Update status label
         let status = if self.is_loading {
@@ -238,6 +244,7 @@ impl ChatScreen {
         self.redraw(cx);
     }
 
+    /// Send the user's message to the backend
     fn send_message(&mut self, cx: &mut Cx) {
         let input = self.view.text_input(ids!(message_input));
         let text = input.text();

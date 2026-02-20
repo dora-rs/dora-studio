@@ -11,6 +11,9 @@ use super::query::{build_log_query, build_metric_query, build_trace_query};
 use super::response::*;
 
 /// A SigNoz backend client.
+///
+/// Handles authentication, URL construction, and executing queries against the SigNoz API.
+#[derive(Debug)]
 pub struct SigNozBackend {
     config: SigNozConfig,
     client: reqwest::Client,
@@ -18,6 +21,9 @@ pub struct SigNozBackend {
 
 impl SigNozBackend {
     /// Create a new `SigNozBackend` from configuration.
+    /// Create a new `SigNozBackend` from configuration.
+    ///
+    /// Validates the base URL and initializes the HTTP client with timeouts.
     pub fn new(config: SigNozConfig) -> Result<Self, OtlpError> {
         if config.base_url.is_empty() {
             return Err(OtlpError::ConnectionFailed(
@@ -57,12 +63,18 @@ impl SigNozBackend {
     }
 
     /// Build the full URL for a given path.
+    /// Build the full URL for a given path.
+    ///
+    /// Appends the path to the configured base URL, ensuring correct slashing.
     fn url(&self, path: &str) -> String {
         let base = self.config.base_url.trim_end_matches('/');
         format!("{}{}", base, path)
     }
 
     /// Send a GET request and deserialize the response.
+    /// Send a GET request and deserialize the response.
+    ///
+    /// Handles authentication headers and error status codes.
     async fn get_request<T: serde::de::DeserializeOwned>(
         &self,
         path: &str,
@@ -91,6 +103,9 @@ impl SigNozBackend {
     }
 
     /// Send a POST request with a JSON body and return the raw response text.
+    /// Send a POST request with a JSON body and return the raw response text.
+    ///
+    /// Used for query endpoints that accept complex JSON payloads.
     async fn post_request(&self, path: &str, body: &serde_json::Value) -> Result<String, OtlpError> {
         let url = self.url(path);
         let resp = self.client.post(&url).json(body).send().await?;
@@ -115,6 +130,9 @@ impl SigNozBackend {
     }
 
     /// Send a composite query and parse the SigNoz response wrapper.
+    /// Send a composite query and parse the SigNoz response wrapper.
+    ///
+    /// Sends the payload to `/api/v3/query_range` and deserializes the `SigNozResponse`.
     async fn send_query(&self, payload: &serde_json::Value) -> Result<SigNozResponse, OtlpError> {
         let text = self.post_request("/api/v3/query_range", payload).await?;
         let resp: SigNozResponse = serde_json::from_str(&text)?;
@@ -129,6 +147,8 @@ impl SigNozBackend {
     }
 
     /// Extract result entries from the SigNoz response, handling both old and new formats.
+    ///
+    /// Checks for `newResult` first, then falls back to `result`.
     fn extract_result_entries(resp: &SigNozResponse) -> &[SigNozResultEntry] {
         if let Some(ref data) = resp.data {
             if let Some(ref new_result) = data.new_result {
@@ -140,6 +160,8 @@ impl SigNozBackend {
     }
 
     /// Parse list-type results into `Span` values.
+    ///
+    /// Iterates through list rows and converts them to `Span` structs.
     fn parse_trace_results(resp: &SigNozResponse) -> Vec<Span> {
         let entries = Self::extract_result_entries(resp);
         let mut spans = Vec::new();
@@ -186,6 +208,8 @@ impl SigNozBackend {
     }
 
     /// Parse list-type results into `LogEntry` values.
+    ///
+    /// Iterates through list rows and converts them to `LogEntry` structs.
     fn parse_log_results(resp: &SigNozResponse) -> Vec<LogEntry> {
         let entries = Self::extract_result_entries(resp);
         let mut logs = Vec::new();
@@ -213,6 +237,8 @@ impl SigNozBackend {
     }
 
     /// Parse time-series results into `MetricSeries` values.
+    ///
+    /// Converts SigNoz time series format into the internal `MetricSeries` representation.
     fn parse_metric_results(resp: &SigNozResponse) -> Vec<MetricSeries> {
         let entries = Self::extract_result_entries(resp);
         let mut metrics = Vec::new();
@@ -364,7 +390,9 @@ fn parse_timestamp(v: &serde_json::Value) -> Option<u64> {
 }
 
 /// Parse an ISO 8601 / RFC 3339 timestamp string to milliseconds since epoch.
+///
 /// Handles formats like "2026-02-02T19:40:37.126981Z" and "2026-02-02T19:40:37Z".
+/// Takes into account the "Z" suffix for UTC.
 fn parse_iso8601_to_ms(s: &str) -> Option<u64> {
     // Expected: "YYYY-MM-DDTHH:MM:SS[.frac]Z"
     let s = s.trim();
@@ -415,6 +443,8 @@ fn parse_iso8601_to_ms(s: &str) -> Option<u64> {
 }
 
 /// Convert a civil date to days since 1970-01-01 (Howard Hinnant's algorithm).
+///
+/// Used for efficient date calculation without heavy dependencies.
 fn days_from_civil(y: i64, m: i64, d: i64) -> i64 {
     let y = if m <= 2 { y - 1 } else { y };
     let era = if y >= 0 { y } else { y - 399 } / 400;

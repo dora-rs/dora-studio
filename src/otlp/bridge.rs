@@ -12,25 +12,38 @@ use crate::otlp::create_backend;
 // ---------------------------------------------------------------------------
 
 #[derive(Debug, Clone)]
+/// Internal request message sent to the background SigNoz runtime.
 pub enum SignozRequest {
+    /// Request a health check of the connection
     HealthCheck,
+    /// Request a trace query with specific parameters
     QueryTraces(TraceQuery),
 }
 
 #[derive(Debug, Clone)]
+/// Internal response message received from the background SigNoz runtime.
 pub enum SignozResponse {
+    /// Health check succeeded
     HealthOk,
+    /// Health check failed with an error message
     HealthError(String),
+    /// Trace query succeeded with a list of spans
     Traces(Vec<Span>),
+    /// Trace query failed with an error message
     TracesError(String),
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Default)]
+/// Represents the current connection state to the SigNoz backend.
 pub enum ConnectionStatus {
     #[default]
+    /// Initial state, connection has not been verified
     Unknown,
+    /// Successfully connected and authenticated
     Connected,
+    /// Disconnected or network error
     Disconnected,
+    /// Configuration or authentication error
     Error,
 }
 

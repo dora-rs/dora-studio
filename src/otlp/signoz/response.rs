@@ -4,10 +4,13 @@ use serde::Deserialize;
 #[derive(Debug, Deserialize)]
 pub struct SigNozResponse {
     #[serde(default)]
+    /// Response status (e.g., "success", "error")
     pub status: String,
     #[serde(default)]
+    /// Data payload, present on success
     pub data: Option<SigNozResponseData>,
     #[serde(default)]
+    /// Error message, present on failure
     pub error: Option<String>,
 }
 
@@ -15,8 +18,10 @@ pub struct SigNozResponse {
 #[derive(Debug, Deserialize)]
 pub struct SigNozResponseData {
     #[serde(default)]
+    /// List of result entries
     pub result: Vec<SigNozResultEntry>,
     #[serde(default, rename = "newResult")]
+    /// Alternative result format used by some endpoints
     pub new_result: Option<SigNozNewResult>,
 }
 
@@ -24,10 +29,13 @@ pub struct SigNozResponseData {
 #[derive(Debug, Deserialize)]
 pub struct SigNozResultEntry {
     #[serde(default)]
+    /// Name of the query (e.g., "A", "B")
     pub query_name: Option<String>,
     #[serde(default)]
+    /// Time series data (for metrics)
     pub series: Option<Vec<SigNozTimeSeries>>,
     #[serde(default)]
+    /// List of rows (for traces/logs)
     pub list: Option<Vec<SigNozListRow>>,
 }
 
@@ -42,6 +50,7 @@ pub struct SigNozNewResult {
 #[derive(Debug, Default, Deserialize)]
 pub struct SigNozNewResultData {
     #[serde(default)]
+    /// List of result entries
     pub result: Vec<SigNozResultEntry>,
 }
 
@@ -49,15 +58,19 @@ pub struct SigNozNewResultData {
 #[derive(Debug, Deserialize)]
 pub struct SigNozTimeSeries {
     #[serde(default)]
+    /// Key-value labels identifying this series
     pub labels: std::collections::HashMap<String, String>,
     #[serde(default)]
+    /// List of data points
     pub values: Vec<SigNozTimeSeriesValue>,
 }
 
 /// A single (timestamp, value) point in a time series.
 #[derive(Debug, Deserialize)]
 pub struct SigNozTimeSeriesValue {
+    /// Timestamp in seconds or milliseconds
     pub timestamp: u64,
+    /// Metric value (can be string or number)
     pub value: serde_json::Value,
 }
 
@@ -65,8 +78,10 @@ pub struct SigNozTimeSeriesValue {
 #[derive(Debug, Deserialize)]
 pub struct SigNozListRow {
     #[serde(default)]
+    /// Timestamp of the event
     pub timestamp: Option<String>,
     #[serde(default)]
+    /// structured data fields
     pub data: std::collections::HashMap<String, serde_json::Value>,
 }
 
@@ -74,8 +89,10 @@ pub struct SigNozListRow {
 #[derive(Debug, Deserialize)]
 pub struct SigNozServicesResponse {
     #[serde(default)]
+    /// Response status
     pub status: String,
     #[serde(default)]
+    /// List of services
     pub data: Vec<SigNozServiceEntry>,
 }
 
