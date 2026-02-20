@@ -389,19 +389,21 @@ fn execute_list_directory(args: &serde_json::Value) -> Result<String, String> {
         std::fs::read_dir(path).map_err(|e| format!("Failed to read directory: {}", e))?;
 
     let mut result = Vec::new();
-    for entry in entries.flatten() {
-        let file_type = entry.file_type().ok();
-        let type_str = match file_type {
-            Some(ft) if ft.is_dir() => "[DIR]",
-            Some(ft) if ft.is_file() => "[FILE]",
-            Some(ft) if ft.is_symlink() => "[LINK]",
-            _ => "[?]",
-        };
-        result.push(format!(
-            "{} {}",
-            type_str,
-            entry.file_name().to_string_lossy()
-        ));
+    for entry in entries {
+        if let Ok(entry) = entry {
+            let file_type = entry.file_type().ok();
+            let type_str = match file_type {
+                Some(ft) if ft.is_dir() => "[DIR]",
+                Some(ft) if ft.is_file() => "[FILE]",
+                Some(ft) if ft.is_symlink() => "[LINK]",
+                _ => "[?]",
+            };
+            result.push(format!(
+                "{} {}",
+                type_str,
+                entry.file_name().to_string_lossy()
+            ));
+        }
     }
 
     Ok(result.join("\n"))

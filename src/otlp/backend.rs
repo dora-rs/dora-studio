@@ -10,9 +10,7 @@ pub trait TelemetryBackend {
     ///
     /// Returns `Ok(())` if the connection is healthy, or an error if unreachable
     /// or authentication fails.
-    fn health_check(
-        &self,
-    ) -> impl std::future::Future<Output = Result<(), OtlpError>> + Send;
+    fn health_check(&self) -> impl std::future::Future<Output = Result<(), OtlpError>> + Send;
 
     /// List services known to the backend.
     ///

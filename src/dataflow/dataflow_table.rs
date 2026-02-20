@@ -462,9 +462,9 @@ pub enum DataflowTableAction {
     /// Refresh the table
     Refresh,
     /// Stop a dataflow
-    Stop(String),     // uuid
+    Stop(String), // uuid
     /// Destroy a dataflow
-    Destroy(String),  // uuid
+    Destroy(String), // uuid
     /// View logs for a dataflow
     ViewLogs(String), // uuid
     /// Select a row

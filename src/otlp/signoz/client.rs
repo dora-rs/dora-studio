@@ -108,7 +108,11 @@ impl SigNozBackend {
     /// Send a POST request with a JSON body and return the raw response text.
     ///
     /// Used for query endpoints that accept complex JSON payloads.
-    async fn post_request(&self, path: &str, body: &serde_json::Value) -> Result<String, OtlpError> {
+    async fn post_request(
+        &self,
+        path: &str,
+        body: &serde_json::Value,
+    ) -> Result<String, OtlpError> {
         let url = self.url(path);
         let resp = self.client.post(&url).json(body).send().await?;
         let status = resp.status();
@@ -184,7 +188,7 @@ impl SigNozBackend {
                         operation_name: json_str(data, "name"),
                         start_time_ms: data
                             .get("timestamp")
-                            .and_then(parse_timestamp)
+                            .and_then(|v| parse_timestamp(v))
                             .or_else(|| row.timestamp.as_deref().and_then(parse_iso8601_to_ms))
                             .unwrap_or(0),
                         duration_ms: data
@@ -221,7 +225,7 @@ impl SigNozBackend {
                     let log = LogEntry {
                         timestamp_ms: data
                             .get("timestamp")
-                            .and_then(parse_timestamp)
+                            .and_then(|v| parse_timestamp(v))
                             .or_else(|| row.timestamp.as_deref().and_then(parse_iso8601_to_ms))
                             .unwrap_or(0),
                         severity: json_str(data, "severity_text"),
@@ -389,11 +393,14 @@ fn parse_iso8601_to_ms(s: &str) -> Option<u64> {
     // Expected: "YYYY-MM-DDTHH:MM:SS[.frac]Z"
     let s = s.trim();
     let (date_part, time_part) = s.split_once('T')?;
-    // Handle +00:00 offset
-    let time_part = time_part
-        .strip_suffix('Z')
-        .or_else(|| time_part.strip_suffix("+00:00"))
-        .or(Some(time_part))?;
+    let time_part = time_part.strip_suffix('Z').or_else(|| {
+        // Handle +00:00 offset
+        if time_part.ends_with("+00:00") {
+            Some(&time_part[..time_part.len() - 6])
+        } else {
+            Some(time_part)
+        }
+    })?;
 
     let mut date_iter = date_part.splitn(3, '-');
     let year: i64 = date_iter.next()?.parse().ok()?;
