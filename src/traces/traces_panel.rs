@@ -261,14 +261,28 @@ live_design! {
 }
 
 /// Loading state for the traces panel
+///
+/// Tracks whether the panel is currently fetching data, has data, or encountered an error.
 #[derive(Debug, Clone, Copy, PartialEq, Default)]
 pub enum TracesLoadingState {
     #[default]
+    /// The panel is idle and displaying data (if any)
     Idle,
+    /// The panel is waiting for a response from the backend
     Loading,
+    /// An error occurred while fetching traces
     Error,
 }
 
+/// A widget that displays a list of OTLP traces
+///
+/// This panel shows trace spans with their service name, operation, duration, status, and timestamp.
+///
+/// # Examples
+///
+/// ```rust
+/// use dora_studio::traces::traces_panel::TracesPanel;
+/// ```
 #[derive(Live, LiveHook, Widget)]
 pub struct TracesPanel {
     #[deref]
@@ -297,6 +311,14 @@ impl Widget for TracesPanel {
 }
 
 impl TracesPanel {
+    /// Update the list of traces to display
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// // inside a widget action handler
+    /// // traces_panel.set_spans(cx, new_spans);
+    /// ```
     pub fn set_spans(&mut self, cx: &mut Cx, spans: Vec<Span>) {
         log!("[TracesPanel] set_spans: {} items", spans.len());
         self.spans = spans;
@@ -305,12 +327,14 @@ impl TracesPanel {
         self.redraw(cx);
     }
 
+    /// Set the panel to loading state
     pub fn set_loading(&mut self, cx: &mut Cx) {
         self.loading_state = TracesLoadingState::Loading;
         self.view.portal_list(ids!(trace_list)).redraw(cx);
         self.redraw(cx);
     }
 
+    /// Display an error message
     pub fn set_error(&mut self, cx: &mut Cx, message: &str) {
         self.loading_state = TracesLoadingState::Error;
         self.error_message = message.to_string();
@@ -394,18 +418,21 @@ impl TracesPanel {
 // ---------------------------------------------------------------------------
 
 impl TracesPanelRef {
+    /// Update the list of traces to display via reference
     pub fn set_spans(&self, cx: &mut Cx, spans: Vec<Span>) {
         if let Some(mut inner) = self.borrow_mut() {
             inner.set_spans(cx, spans);
         }
     }
 
+    /// Set loading state via reference
     pub fn set_loading(&self, cx: &mut Cx) {
         if let Some(mut inner) = self.borrow_mut() {
             inner.set_loading(cx);
         }
     }
 
+    /// Set error state via reference
     pub fn set_error(&self, cx: &mut Cx, message: &str) {
         if let Some(mut inner) = self.borrow_mut() {
             inner.set_error(cx, message);

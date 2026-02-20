@@ -22,6 +22,13 @@ static API_KEY: Mutex<String> = Mutex::new(String::new());
 static PENDING_RESPONSE: Mutex<Option<ChatResponse>> = Mutex::new(None);
 
 /// Check if there's a pending response from the API
+///
+/// This is used for polling the API status from the UI main loop.
+///
+/// # Returns
+///
+/// - `Some(ChatResponse)`: If a response is available (consumed)
+/// - `None`: If no response is waiting
 pub fn take_pending_response() -> Option<ChatResponse> {
     PENDING_RESPONSE.lock().unwrap().take()
 }
@@ -41,12 +48,34 @@ You have tools for: dora dataflows (list/start/stop/destroy), file operations (r
 
 Use tools proactively. Show results briefly."#;
 
+/// A single message in the chat history.
+///
+/// # Examples
+///
+/// ```rust
+/// use dora_studio::api::{ChatMessage, MessageRole};
+///
+/// let msg = ChatMessage {
+///     role: MessageRole::User,
+///     content: "Hello, world!".to_string(),
+/// };
+/// ```
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ChatMessage {
+    /// The role of the message sender
     pub role: MessageRole,
+    /// The text content of the message
     pub content: String,
 }
 
+/// The role of a chat participant.
+///
+/// # Examples
+///
+/// ```rust
+/// use dora_studio::api::MessageRole;
+/// let role = MessageRole::User;
+/// ```
 #[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "lowercase")]
 pub enum MessageRole {
@@ -54,6 +83,9 @@ pub enum MessageRole {
     Assistant,
 }
 
+/// A response from the chat API.
+///
+/// This enum encapsulates different types of updates from the AI agent loop.
 #[derive(Debug, Clone)]
 pub enum ChatResponse {
     Message(String),
@@ -62,6 +94,15 @@ pub enum ChatResponse {
 }
 
 /// Set the API key for Claude
+///
+/// This overrides any key loaded from the environment.
+///
+/// # Examples
+///
+/// ```
+/// use dora_studio::api::set_api_key;
+/// set_api_key("sk-test".to_string());
+/// ```
 pub fn set_api_key(key: String) {
     *API_KEY.lock().unwrap() = key;
 }
@@ -85,7 +126,7 @@ pub fn init_api_key_from_env() {
     }
 }
 
-/// Initialize the async runtime for API calls (native only)
+/// Start the API runtime (native only)
 #[cfg(not(target_arch = "wasm32"))]
 pub fn start_api_runtime() {
     // Use a single lock to check and initialize atomically
@@ -131,7 +172,7 @@ pub fn start_api_runtime() {
     });
 }
 
-/// Submit a chat request to the Claude API (native)
+/// Submit a chat request (native)
 #[cfg(not(target_arch = "wasm32"))]
 pub fn submit_chat_request(messages: Vec<ChatMessage>) {
     eprintln!("[API] submit_chat_request called");
@@ -150,7 +191,7 @@ pub fn submit_chat_request(messages: Vec<ChatMessage>) {
     eprintln!("[API] submit_chat_request complete");
 }
 
-/// Submit a chat request to the Claude API (WASM)
+/// Submit a chat request (WASM)
 #[cfg(target_arch = "wasm32")]
 pub fn submit_chat_request(messages: Vec<ChatMessage>) {
     wasm_bindgen_futures::spawn_local(async move {
@@ -265,6 +306,7 @@ struct ClaudeErrorDetail {
 // WASM Simple API Call (no tools)
 // ============================================================================
 
+/// System prompt for the Dora assistant (WASM)
 #[cfg(target_arch = "wasm32")]
 const WASM_SYSTEM_PROMPT: &str = "You are Dora Studio Assistant. Be extremely concise. Short answers only. No unnecessary explanations. Note: Tools unavailable in web version - use desktop app for full features.";
 

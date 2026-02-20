@@ -3,12 +3,19 @@ use std::fmt;
 /// Errors that can occur when interacting with OTLP backends.
 #[derive(Debug)]
 pub enum OtlpError {
+    /// Wrapper for HTTP client errors
     Http(reqwest::Error),
+    /// API-level errors (e.g., 404 Not Found, 500 Internal Server Error)
     ApiError { status: u16, message: String },
+    /// Errors deserializing backend responses
     Deserialization(serde_json::Error),
+    /// Failure to establish a connection to the backend
     ConnectionFailed(String),
+    /// Authentication failure (e.g., invalid API key)
     AuthenticationFailed(String),
+    /// Invalid query parameters
     InvalidQuery(String),
+    /// Generic backend error
     Backend(String),
 }
 

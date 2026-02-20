@@ -143,13 +143,19 @@ live_design! {
 
 app_main!(App);
 
+/// The currently active panel in the UI.
 #[derive(Debug, Clone, Copy, PartialEq, Default)]
 enum ActivePanel {
     #[default]
+    /// The dataflow management panel
     Dataflows,
+    /// The trace visualization panel
     Traces,
 }
 
+/// The main application state.
+///
+/// Manages the UI, data refresh timers, and interactions with the backend (Claude API, SigNoz).
 #[derive(Live, LiveHook)]
 pub struct App {
     #[live]
@@ -300,6 +306,7 @@ impl AppMain for App {
 }
 
 impl App {
+    /// Switch the visible panel in the UI
     fn switch_to_panel(&mut self, cx: &mut Cx, panel: ActivePanel) {
         self.active_panel = panel;
         match panel {
@@ -323,6 +330,7 @@ impl App {
         self.ui.redraw(cx);
     }
 
+    /// Fetch the list of running dataflows from the `dora` CLI
     fn refresh_dataflows(&mut self, cx: &mut Cx) {
         log!("[App] refresh_dataflows called");
         let table = self.ui.dataflow_table(ids!(dataflow_table));
@@ -351,6 +359,7 @@ impl App {
     }
 
     #[cfg(not(target_arch = "wasm32"))]
+    /// Fetch the latest traces from the OTLP backend
     fn refresh_traces(&mut self, cx: &mut Cx) {
         log!("[App] refresh_traces called");
         let panel = self.ui.traces_panel(ids!(traces_panel));
@@ -364,6 +373,7 @@ impl App {
     }
 
     #[cfg(not(target_arch = "wasm32"))]
+    /// Handle asynchronous responses from the SigNoz bridge
     fn handle_signoz_response(&mut self, cx: &mut Cx, response: crate::otlp::SignozResponse) {
         match response {
             crate::otlp::SignozResponse::HealthOk => {
@@ -391,6 +401,7 @@ impl App {
         }
     }
 
+    /// Send a stop command to a running dataflow
     fn stop_dataflow(&mut self, cx: &mut Cx, uuid: &str) {
         let args = serde_json::json!({ "dataflow_id": uuid });
         let result = execute_tool("dora_stop", "stop", &args);
@@ -403,6 +414,7 @@ impl App {
         self.refresh_dataflows(cx);
     }
 
+    /// Send a destroy command to a running dataflow
     fn destroy_dataflow(&mut self, cx: &mut Cx, uuid: &str) {
         let args = serde_json::json!({ "dataflow_id": uuid });
         let result = execute_tool("dora_destroy", "destroy", &args);
@@ -415,6 +427,7 @@ impl App {
         self.refresh_dataflows(cx);
     }
 
+    /// Fetch and display logs for a specific dataflow
     fn view_dataflow_logs(&self, uuid: &str) {
         let args = serde_json::json!({ "dataflow_id": uuid });
         let result = execute_tool("dora_logs", "logs", &args);
@@ -427,6 +440,7 @@ impl App {
     }
 }
 
+/// Helper to truncate long strings for display
 fn truncate_str(s: &str, max: usize) -> String {
     if s.len() <= max {
         s.to_string()

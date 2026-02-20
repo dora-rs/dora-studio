@@ -7,9 +7,14 @@ use crate::otlp::types::*;
 /// in `mod.rs` dispatches to them, avoiding the need for `async-trait`.
 pub trait TelemetryBackend {
     /// Check that the backend is reachable and authenticated.
+    ///
+    /// Returns `Ok(())` if the connection is healthy, or an error if unreachable
+    /// or authentication fails.
     fn health_check(&self) -> impl std::future::Future<Output = Result<(), OtlpError>> + Send;
 
     /// List services known to the backend.
+    ///
+    /// Returns a list of services with their operation counts.
     fn list_services(
         &self,
     ) -> impl std::future::Future<Output = Result<Vec<ServiceInfo>, OtlpError>> + Send;
@@ -20,13 +25,17 @@ pub trait TelemetryBackend {
         query: &TraceQuery,
     ) -> impl std::future::Future<Output = Result<QueryResult<Span>, OtlpError>> + Send;
 
-    /// Query metric time series.
+    /// Query metric time series matching the given criteria.
+    ///
+    /// Supports aggregation and grouping.
     fn query_metrics(
         &self,
         query: &MetricQuery,
     ) -> impl std::future::Future<Output = Result<QueryResult<MetricSeries>, OtlpError>> + Send;
 
-    /// Query log entries.
+    /// Query log entries matching the given criteria.
+    ///
+    /// Supports filtering by severity, body content, and attributes.
     fn query_logs(
         &self,
         query: &LogQuery,

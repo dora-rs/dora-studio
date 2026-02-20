@@ -13,6 +13,9 @@ fn default_time_range() -> TimeRange {
 }
 
 /// Build the JSON payload for a SigNoz `/api/v3/query_range` trace query.
+///
+/// Constructs a composite query object that filters spans based on service, operation,
+/// duration, and tags.
 pub fn build_trace_query(query: &TraceQuery) -> serde_json::Value {
     let tr = query.time_range.clone().unwrap_or_else(default_time_range);
     let limit = query.limit.unwrap_or(100);
@@ -97,6 +100,8 @@ pub fn build_trace_query(query: &TraceQuery) -> serde_json::Value {
 }
 
 /// Build the JSON payload for a SigNoz `/api/v3/query_range` log query.
+///
+/// Constructs a query to filter logs by service, severity, and body content.
 pub fn build_log_query(query: &LogQuery) -> serde_json::Value {
     let tr = query.time_range.clone().unwrap_or_else(default_time_range);
     let limit = query.limit.unwrap_or(100);
@@ -168,6 +173,8 @@ pub fn build_log_query(query: &LogQuery) -> serde_json::Value {
 }
 
 /// Build the JSON payload for a SigNoz `/api/v3/query_range` metric query.
+///
+/// Constructs a PromQL-style query or composite query for metrics.
 pub fn build_metric_query(query: &MetricQuery) -> serde_json::Value {
     let tr = query.time_range.clone().unwrap_or_else(default_time_range);
     let step = query.step_seconds.unwrap_or(60);

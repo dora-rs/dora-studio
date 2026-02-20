@@ -307,24 +307,58 @@ live_design! {
 }
 
 /// Dataflow information from dora list command
+///
+/// This struct corresponds to the JSON output from the dora CLI
+///
+/// # Examples
+///
+/// ```rust
+/// use dora_studio::dataflow::DataflowInfo;
+///
+/// let info = DataflowInfo {
+///     uuid: "123".to_string(),
+///     name: "test-flow".to_string(),
+///     status: "Running".to_string(),
+///     nodes: 1,
+///     cpu: 10.5,
+///     memory: 0.1,
+/// };
+/// ```
 #[derive(Debug, Clone, Deserialize, Default)]
 pub struct DataflowInfo {
+    /// The unique identifier of the dataflow
     #[serde(default)]
     pub uuid: String,
+    /// The name of the dataflow
     #[serde(default)]
     pub name: String,
+    /// The current status of the dataflow
     #[serde(default)]
     pub status: String,
+    /// The number of nodes in the dataflow
     #[serde(default)]
     pub nodes: u32,
+    /// The CPU usage of the dataflow
     #[serde(default)]
     pub cpu: f64,
+    /// The memory usage of the dataflow
     #[serde(default)]
     pub memory: f64,
 }
 
 impl DataflowInfo {
     /// Parse NDJSON (newline-delimited JSON) into a vector of DataflowInfo
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use dora_studio::dataflow::DataflowInfo;
+    ///
+    /// let input = r#"{"uuid": "1", "name": "flow1"}
+    /// {"uuid": "2", "name": "flow2"}"#;
+    /// let dataflows = DataflowInfo::parse_ndjson(input);
+    /// assert_eq!(dataflows.len(), 2);
+    /// ```
     pub fn parse_ndjson(input: &str) -> Vec<Self> {
         input
             .lines()
@@ -334,11 +368,32 @@ impl DataflowInfo {
     }
 
     /// Parse JSON array into a vector of DataflowInfo
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use dora_studio::dataflow::DataflowInfo;
+    ///
+    /// let json = r#"[{"uuid": "1", "name": "flow1", "status": "Running", "memory": 0.1, "cpu": 1.5}]"#;
+    /// let flows = DataflowInfo::parse_json_array(json);
+    /// assert_eq!(flows.len(), 1);
+    /// assert_eq!(flows[0].name, "flow1");
+    /// ```
     pub fn parse_json_array(input: &str) -> Vec<Self> {
         serde_json::from_str(input).unwrap_or_default()
     }
 
     /// Format memory in human-readable format
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use dora_studio::dataflow::DataflowInfo;
+    ///
+    /// let mut info = DataflowInfo::default();
+    /// info.memory = 0.5;
+    /// assert_eq!(info.memory_formatted(), "512 MB");
+    /// ```
     pub fn memory_formatted(&self) -> String {
         if self.memory < 0.001 {
             "0 B".to_string()
@@ -350,11 +405,31 @@ impl DataflowInfo {
     }
 
     /// Format CPU percentage
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use dora_studio::dataflow::DataflowInfo;
+    ///
+    /// let mut info = DataflowInfo::default();
+    /// info.cpu = 10.5;
+    /// assert_eq!(info.cpu_formatted(), "10.5%");
+    /// ```
     pub fn cpu_formatted(&self) -> String {
         format!("{:.1}%", self.cpu)
     }
 
     /// Get short UUID (first 8 characters)
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use dora_studio::dataflow::DataflowInfo;
+    ///
+    /// let mut info = DataflowInfo::default();
+    /// info.uuid = "1234567890abcdef".to_string();
+    /// assert_eq!(info.uuid_short(), "12345678...");
+    /// ```
     pub fn uuid_short(&self) -> String {
         if self.uuid.len() > 8 {
             format!("{}...", &self.uuid[..8])
@@ -364,6 +439,16 @@ impl DataflowInfo {
     }
 
     /// Check if dataflow is running
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use dora_studio::dataflow::DataflowInfo;
+    ///
+    /// let mut info = DataflowInfo::default();
+    /// info.status = "Running".to_string();
+    /// assert!(info.is_running());
+    /// ```
     pub fn is_running(&self) -> bool {
         self.status.to_lowercase() == "running"
     }
@@ -372,11 +457,17 @@ impl DataflowInfo {
 /// Actions emitted by the DataflowTable
 #[derive(Clone, Debug, DefaultNone)]
 pub enum DataflowTableAction {
+    /// No action
     None,
+    /// Refresh the table
     Refresh,
-    Stop(String),     // uuid
-    Destroy(String),  // uuid
+    /// Stop a dataflow
+    Stop(String), // uuid
+    /// Destroy a dataflow
+    Destroy(String), // uuid
+    /// View logs for a dataflow
     ViewLogs(String), // uuid
+    /// Select a row
     SelectRow(usize), // row index
 }
 
@@ -384,22 +475,37 @@ pub enum DataflowTableAction {
 #[derive(Debug, Clone, Copy, PartialEq, Default)]
 pub enum TableLoadingState {
     #[default]
+    /// The table is idle
     Idle,
+    /// The table is loading data
     Loading,
+    /// An error occurred while loading data
     Error,
 }
 
+/// A widget that displays a list of Dora dataflows
+///
+/// # Examples
+///
+/// ```rust
+/// use dora_studio::dataflow::DataflowTable;
+/// ```
 #[derive(Live, LiveHook, Widget)]
 pub struct DataflowTable {
     #[deref]
+    /// The underlying view
     view: View,
     #[rust]
+    /// The dataflows to display
     dataflows: Vec<DataflowInfo>,
     #[rust]
+    /// The current loading state
     loading_state: TableLoadingState,
     #[rust]
+    /// The index of the selected row
     selected_row: Option<usize>,
     #[rust]
+    /// The current error message, if any
     error_message: String,
 }
 

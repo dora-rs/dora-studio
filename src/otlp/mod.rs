@@ -25,24 +25,28 @@ pub enum TelemetryClient {
 }
 
 impl TelemetryClient {
+    /// Check the health of the underlying backend.
     pub async fn health_check(&self) -> Result<(), OtlpError> {
         match self {
             TelemetryClient::SigNoz(b) => b.health_check().await,
         }
     }
 
+    /// List all available services.
     pub async fn list_services(&self) -> Result<Vec<ServiceInfo>, OtlpError> {
         match self {
             TelemetryClient::SigNoz(b) => b.list_services().await,
         }
     }
 
+    /// Query trace spans.
     pub async fn query_traces(&self, query: &TraceQuery) -> Result<QueryResult<Span>, OtlpError> {
         match self {
             TelemetryClient::SigNoz(b) => b.query_traces(query).await,
         }
     }
 
+    /// Query metrics.
     pub async fn query_metrics(
         &self,
         query: &MetricQuery,
@@ -52,12 +56,14 @@ impl TelemetryClient {
         }
     }
 
+    /// Query logs.
     pub async fn query_logs(&self, query: &LogQuery) -> Result<QueryResult<LogEntry>, OtlpError> {
         match self {
             TelemetryClient::SigNoz(b) => b.query_logs(query).await,
         }
     }
 
+    /// Get the display name of the backend.
     pub fn display_name(&self) -> String {
         match self {
             TelemetryClient::SigNoz(b) => b.display_name(),
