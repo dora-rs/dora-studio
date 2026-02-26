@@ -1,0 +1,32 @@
+name: Maintenance
+
+on:
+  schedule:
+    - cron: '0 0 * * 0' # Run weekly on Sunday at midnight UTC
+  workflow_dispatch: # Allow running manually
+
+jobs:
+  cargo-update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Update Cargo.lock
+        run: cargo update
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "chore(deps): update Cargo.lock"
+          title: "chore(deps): update Cargo.lock"
+          body: |
+            Automated dependency update via `cargo update`.
+            
+            This PR updates the `Cargo.lock` file to reflect the latest compatible versions of dependencies.
+          branch: "chore/cargo-update"
+          delete-branch: true
+          labels: dependencies
