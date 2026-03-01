@@ -1,0 +1,13 @@
+[workspace]
+members = [
+    "makepad-demo",
+    "dora-studio-shell",
+    "dora-studio-widgets",
+    "dora-studio-client",
+    "apps/dataflow-manager",
+    "apps/yaml-editor",
+    "apps/log-viewer",
+    "apps/telemetry-dashboard"
+]
+
+resolver = "2"
