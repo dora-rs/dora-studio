@@ -1,0 +1,62 @@
+[package]
+name = "dora-studio"
+version = "0.1.0"
+edition = "2021"
+license = "Apache-2.0"
+repository = "https://github.com/mofa-org/dora-studio"
+description = "Dora Studio - AI Chat Application built with Makepad"
+
+[dependencies]
+# UI Framework (pure Rust)
+makepad-widgets = { git = "https://github.com/makepad/makepad", branch = "dev" }
+
+# Serialization (pure Rust)
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+# Error handling
+anyhow = "1"
+
+# Native-only dependencies
+[target.'cfg(not(target_arch = "wasm32"))'.dependencies]
+# Async Runtime for native
+tokio = { version = "1", features = ["rt-multi-thread", "macros", "sync", "time"] }
+# HTTP client for native
+reqwest = { version = "0.12", default-features = false, features = ["json", "rustls-tls"] }
+
+# WASM-only dependencies
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+# Async runtime for WASM
+tokio = { version = "1", features = ["sync", "macros", "rt", "time"] }
+# HTTP client for WASM
+reqwest = { version = "0.12", default-features = false, features = ["json"] }
+wasm-bindgen-futures = "0.4"
+
+[dev-dependencies]
+# Testing utilities
+tokio-test = "0.4"
+wiremock = "0.6"
+tempfile = "3"
+uuid = { version = "1", features = ["v4"] }
+chrono = "0.4"
+
+[package.metadata.packager]
+product_name = "Dora Studio"
+identifier = "com.mofa.dora-studio"
+category = "Utility"
+before_each_package_command = "robius-packaging-commands before-each-package --binary-name dora-studio --path-to-binary ./target/release/dora-studio"
+resources = [
+    # Makepad resources
+    { src = "./dist/resources/makepad_widgets", target = "makepad_widgets" },
+    { src = "./dist/resources/makepad_fonts_chinese_bold", target = "makepad_fonts_chinese_bold" },
+    { src = "./dist/resources/makepad_fonts_chinese_bold_2", target = "makepad_fonts_chinese_bold_2" },
+    { src = "./dist/resources/makepad_fonts_chinese_regular", target = "makepad_fonts_chinese_regular" },
+    { src = "./dist/resources/makepad_fonts_chinese_regular_2", target = "makepad_fonts_chinese_regular_2" },
+    { src = "./dist/resources/makepad_fonts_emoji", target = "makepad_fonts_emoji" },
+    # Dora resources
+    # { src = "./dist/resources/dora_studio", target = "dora_studio" },
+]
+out_dir = "./dist"
+
+[package.metadata.packager.macos]
+signing_identity = "-"
