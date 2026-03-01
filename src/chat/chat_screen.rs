@@ -140,6 +140,17 @@ live_design! {
     }
 }
 
+/// A widget representing the chat interface.
+///
+/// It displays the message history, handles user input, and manages the
+/// integration with the asynchronous Claude API.
+///
+/// # Examples
+///
+/// ```text
+/// // In a live_design! block:
+/// <ChatScreen> {}
+/// ```
 #[derive(Live, LiveHook, Widget)]
 pub struct ChatScreen {
     #[deref]

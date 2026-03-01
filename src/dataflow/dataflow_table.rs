@@ -306,7 +306,24 @@ live_design! {
     }
 }
 
-/// Dataflow information from dora list command
+/// Dataflow information from the `dora list` command.
+///
+/// Contains metadata and runtime metrics for a specific dataflow.
+///
+/// # Examples
+///
+/// ```rust
+/// use dora_studio::dataflow::DataflowInfo;
+///
+/// let df = DataflowInfo {
+///     uuid: "123e4567-e89b-12d3".to_string(),
+///     name: "my_dataflow".to_string(),
+///     status: "Running".to_string(),
+///     nodes: 3,
+///     cpu: 10.5,
+///     memory: 0.12, // 120MB
+/// };
+/// ```
 #[derive(Debug, Clone, Deserialize, Default)]
 pub struct DataflowInfo {
     #[serde(default)]
@@ -369,7 +386,18 @@ impl DataflowInfo {
     }
 }
 
-/// Actions emitted by the DataflowTable
+/// Actions emitted by the `DataflowTable` widget.
+///
+/// These actions represent user interactions with the table, such as
+/// clicking the Stop, Kill, or view Logs buttons on a specific row.
+///
+/// # Examples
+///
+/// ```rust
+/// use dora_studio::dataflow::DataflowTableAction;
+///
+/// let action = DataflowTableAction::Stop("123e4567-e89b-12d3".to_string());
+/// ```
 #[derive(Clone, Debug, DefaultNone)]
 pub enum DataflowTableAction {
     None,
@@ -380,7 +408,18 @@ pub enum DataflowTableAction {
     SelectRow(usize), // row index
 }
 
-/// Loading state for the table
+/// Loading state for the dataflow table.
+///
+/// Represents whether the dataflow list is currently fetching data,
+/// has encountered an error, or is idle.
+///
+/// # Examples
+///
+/// ```rust
+/// use dora_studio::dataflow::TableLoadingState;
+///
+/// let state = TableLoadingState::Loading;
+/// ```
 #[derive(Debug, Clone, Copy, PartialEq, Default)]
 pub enum TableLoadingState {
     #[default]
@@ -389,6 +428,17 @@ pub enum TableLoadingState {
     Error,
 }
 
+/// A widget representing the table of running dataflows.
+///
+/// This widget displays a list of `DataflowInfo` items, showing their UUID,
+/// Name, Status, CPU, and Memory usage, along with action buttons.
+///
+/// # Examples
+///
+/// ```text
+/// // In a live_design! block:
+/// <DataflowTable> {}
+/// ```
 #[derive(Live, LiveHook, Widget)]
 pub struct DataflowTable {
     #[deref]

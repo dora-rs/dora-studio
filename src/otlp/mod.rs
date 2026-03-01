@@ -18,8 +18,23 @@ use backend::TelemetryBackend;
 
 /// Enum-dispatch wrapper over concrete telemetry backends.
 ///
-/// Each variant delegates to the underlying backend's `TelemetryBackend` impl.
-/// This avoids pulling in `async-trait` as a dependency.
+/// Each variant delegates to the underlying backend's `TelemetryBackend` implementation.
+/// This provides a uniform interface for querying traces, metrics, and logs
+/// across different telemetry platforms.
+///
+/// # Examples
+///
+/// ```rust
+/// use dora_studio::otlp::{TelemetryClient, create_backend, BackendConfig, SigNozConfig, AuthMethod};
+///
+/// let config = BackendConfig::SigNoz(SigNozConfig {
+///     base_url: "http://localhost:3301".to_string(),
+///     auth: AuthMethod::None,
+///     timeout_secs: 30,
+/// });
+///
+/// let client = create_backend(config).unwrap();
+/// ```
 pub enum TelemetryClient {
     SigNoz(SigNozBackend),
 }
@@ -66,6 +81,28 @@ impl TelemetryClient {
 }
 
 /// Create a telemetry client from a backend configuration.
+///
+/// Instantiates the appropriate telemetry backend (e.g., SigNoz) based on the
+/// provided configuration rules.
+///
+/// # Returns
+///
+/// Returns a `TelemetryClient` instance ready to query traces, metrics, and logs,
+/// or an `OtlpError` if the configuration is invalid.
+///
+/// # Examples
+///
+/// ```rust
+/// use dora_studio::otlp::{create_backend, BackendConfig, SigNozConfig, AuthMethod};
+///
+/// let config = BackendConfig::SigNoz(SigNozConfig {
+///     base_url: "http://localhost:3301".to_string(),
+///     auth: AuthMethod::None,
+///     timeout_secs: 30,
+/// });
+///
+/// let client = create_backend(config).unwrap();
+/// ```
 pub fn create_backend(config: BackendConfig) -> Result<TelemetryClient, OtlpError> {
     match config {
         BackendConfig::SigNoz(cfg) => {

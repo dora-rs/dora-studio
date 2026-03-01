@@ -150,6 +150,17 @@ enum ActivePanel {
     Traces,
 }
 
+/// The main application widget for Dora Studio.
+///
+/// Handles the lifecycle, UI state, tabs (Dataflows vs Traces), and background polling
+/// of the native and WASM tools.
+///
+/// # Examples
+///
+/// ```rust
+/// // The App struct is primarily instantiated via Makepad's `app_main!` macro:
+/// // app_main!(App);
+/// ```
 #[derive(Live, LiveHook)]
 pub struct App {
     #[live]

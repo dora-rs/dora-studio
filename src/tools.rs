@@ -1,7 +1,27 @@
 use serde::Serialize;
 use std::process::Command;
 
-/// Tool definition for Claude API
+/// A definition of a tool that can be used by the Claude API.
+///
+/// Contains the name, description, and JSON schema of the expected input.
+///
+/// # Examples
+///
+/// ```rust
+/// use dora_studio::tools::ToolDefinition;
+///
+/// let tool = ToolDefinition {
+///     name: "shell_command".to_string(),
+///     description: "Execute a shell command.".to_string(),
+///     input_schema: serde_json::json!({
+///         "type": "object",
+///         "properties": {
+///             "command": { "type": "string" }
+///         },
+///         "required": ["command"]
+///     }),
+/// };
+/// ```
 #[derive(Debug, Clone, Serialize)]
 pub struct ToolDefinition {
     pub name: String,
@@ -9,7 +29,22 @@ pub struct ToolDefinition {
     pub input_schema: serde_json::Value,
 }
 
-/// Result of executing a tool
+/// The result of executing a tool.
+///
+/// Contains the output string (or error message) and a boolean indicating
+/// if the command failed.
+///
+/// # Examples
+///
+/// ```rust
+/// use dora_studio::tools::ToolResult;
+///
+/// let result = ToolResult {
+///     tool_use_id: "toolu_01A09q90...".to_string(),
+///     content: "Started dataflow successfully".to_string(),
+///     is_error: false,
+/// };
+/// ```
 #[derive(Debug, Clone)]
 pub struct ToolResult {
     pub tool_use_id: String,
@@ -17,7 +52,19 @@ pub struct ToolResult {
     pub is_error: bool,
 }
 
-/// Get all available dora tools for Claude
+/// Get a list of all available tools for the Claude assistant.
+///
+/// These tools provide the agent with capabilities to manage dataflows,
+/// read/write files, and execute shell commands.
+///
+/// # Examples
+///
+/// ```rust
+/// use dora_studio::tools::get_dora_tools;
+///
+/// let tools = get_dora_tools();
+/// assert!(!tools.is_empty());
+/// ```
 pub fn get_dora_tools() -> Vec<ToolDefinition> {
     vec![
         ToolDefinition {
@@ -156,7 +203,26 @@ pub fn get_dora_tools() -> Vec<ToolDefinition> {
     ]
 }
 
-/// Execute a tool by name with given arguments
+/// Execute a specific tool by its name.
+///
+/// Parses the `args` according to the tool's expected schema and performs
+/// the associated action, returning a `ToolResult`.
+///
+/// # Examples
+///
+/// ```rust
+/// use dora_studio::tools::execute_tool;
+/// use serde_json::json;
+///
+/// let args = json!({ "path": "." });
+/// let result = execute_tool("list_directory", "toolu_123", &args);
+///
+/// if result.is_error {
+///     eprintln!("Failed: {}", result.content);
+/// } else {
+///     println!("Directory contents:\n{}", result.content);
+/// }
+/// ```
 pub fn execute_tool(name: &str, tool_use_id: &str, args: &serde_json::Value) -> ToolResult {
     let result = match name {
         "dora_list" => execute_dora_list(),

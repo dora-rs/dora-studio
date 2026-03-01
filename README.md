@@ -103,6 +103,12 @@ Key design decisions:
 - **[../dora/CLAUDE.md](../dora/CLAUDE.md)** - Dora framework architecture
 - **[../mofa-studio/ARCHITECTURE.md](../mofa-studio/ARCHITECTURE.md)** - UI patterns reference
 
+### API Documentation
+To generate and view the API documentation for the `dora-studio` crate, run:
+```bash
+cargo doc --no-deps --open
+```
+
 ## Technology Stack (100% Rust)
 
 All dependencies are pure Rust with no C/C++ components:

@@ -21,7 +21,23 @@ static API_KEY: Mutex<String> = Mutex::new(String::new());
 // Pending response for polling
 static PENDING_RESPONSE: Mutex<Option<ChatResponse>> = Mutex::new(None);
 
-/// Check if there's a pending response from the API
+/// Check if there's a pending response from the API.
+///
+/// This function is used to poll for asynchronous responses from the Claude API.
+///
+/// # Examples
+///
+/// ```rust
+/// use dora_studio::api::{take_pending_response, ChatResponse};
+///
+/// if let Some(response) = take_pending_response() {
+///     match response {
+///         ChatResponse::Message(msg) => println!("Got message: {}", msg),
+///         ChatResponse::ToolExecution(info) => println!("Tool execution: {}", info),
+///         ChatResponse::Error(err) => eprintln!("Error: {}", err),
+///     }
+/// }
+/// ```
 pub fn take_pending_response() -> Option<ChatResponse> {
     PENDING_RESPONSE.lock().unwrap().take()
 }
@@ -41,37 +57,115 @@ You have tools for: dora dataflows (list/start/stop/destroy), file operations (r
 
 Use tools proactively. Show results briefly."#;
 
+/// A single message in the chat conversation.
+///
+/// # Examples
+///
+/// ```rust
+/// use dora_studio::api::{ChatMessage, MessageRole};
+///
+/// let msg = ChatMessage {
+///     role: MessageRole::User,
+///     content: "Hello, Claude!".to_string(),
+/// };
+/// ```
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ChatMessage {
+    /// The role of the message sender (`User` or `Assistant`)
     pub role: MessageRole,
+    /// The text content of the message
     pub content: String,
 }
 
+/// The role of the sender of a chat message.
+///
+/// # Examples
+///
+/// ```rust
+/// use dora_studio::api::MessageRole;
+///
+/// let user = MessageRole::User;
+/// let assistant = MessageRole::Assistant;
+/// ```
 #[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "lowercase")]
 pub enum MessageRole {
+    /// A message sent by the user
     User,
+    /// A message sent by the AI assistant
     Assistant,
 }
 
+/// A response from the chat API.
+///
+/// This can be a final text message, an intermediate tool execution update,
+/// or an error message.
+///
+/// # Examples
+///
+/// ```rust
+/// use dora_studio::api::ChatResponse;
+///
+/// let response = ChatResponse::Message("I can help with that".to_string());
+/// let update = ChatResponse::ToolExecution("Running dora_list...".to_string());
+/// let err = ChatResponse::Error("Failed to connect".to_string());
+/// ```
 #[derive(Debug, Clone)]
 pub enum ChatResponse {
+    /// Final textual response from the assistant
     Message(String),
+    /// Notification that the assistant is executing a tool
     ToolExecution(String), // Intermediate message showing tool execution
+    /// An error encountered during the chat request
     Error(String),
 }
 
-/// Set the API key for Claude
+/// Set the API key for Claude.
+///
+/// This key is used for authenticating requests to the Anthropic API.
+///
+/// # Examples
+///
+/// ```rust
+/// use dora_studio::api::set_api_key;
+///
+/// set_api_key("your-api-key-here".to_string());
+/// ```
 pub fn set_api_key(key: String) {
     *API_KEY.lock().unwrap() = key;
 }
 
-/// Get the current API key
+/// Get the current API key.
+///
+/// Returns the currently configured API key, or an empty string if not set.
+///
+/// # Examples
+///
+/// ```rust
+/// use dora_studio::api::get_api_key;
+///
+/// let key = get_api_key();
+/// if !key.is_empty() {
+///     println!("API key is configured");
+/// }
+/// ```
 pub fn get_api_key() -> String {
     API_KEY.lock().unwrap().clone()
 }
 
-/// Initialize API key from environment variable
+/// Initialize the API key from the `ANTHROPIC_API_KEY` environment variable.
+///
+/// This is called automatically at startup, but can be called manually
+/// to reload the configuration.
+///
+/// # Examples
+///
+/// ```rust
+/// use dora_studio::api::init_api_key_from_env;
+///
+/// // Load from the environment parameter ANTHROPIC_API_KEY
+/// init_api_key_from_env();
+/// ```
 pub fn init_api_key_from_env() {
     if let Ok(key) = std::env::var("ANTHROPIC_API_KEY") {
         if !key.is_empty() {
@@ -85,7 +179,21 @@ pub fn init_api_key_from_env() {
     }
 }
 
-/// Initialize the async runtime for API calls (native only)
+/// Initialize the asynchronous runtime for executing API calls.
+///
+/// For native targets, this spawns a background thread with a Tokio runtime
+/// dedicated to processing chat requests concurrently.
+///
+/// # Examples
+///
+/// ```rust
+/// #[cfg(not(target_arch = "wasm32"))]
+/// use dora_studio::api::start_api_runtime;
+///
+/// // Ensure the runtime is ready before submitting requests natively
+/// #[cfg(not(target_arch = "wasm32"))]
+/// start_api_runtime();
+/// ```
 #[cfg(not(target_arch = "wasm32"))]
 pub fn start_api_runtime() {
     // Use a single lock to check and initialize atomically
@@ -131,7 +239,27 @@ pub fn start_api_runtime() {
     });
 }
 
-/// Submit a chat request to the Claude API (native)
+/// Submit a chat request to the Claude API (Native version).
+///
+/// Evaluates the existing conversation history and communicates with the Claude
+/// API asynchronously. Responses will be accessible via `take_pending_response()`.
+///
+/// # Examples
+///
+/// ```rust
+/// #[cfg(not(target_arch = "wasm32"))]
+/// {
+///     use dora_studio::api::{submit_chat_request, ChatMessage, MessageRole};
+///
+///     let messages = vec![
+///         ChatMessage {
+///             role: MessageRole::User,
+///             content: "Hello!".to_string(),
+///         }
+///     ];
+///     submit_chat_request(messages);
+/// }
+/// ```
 #[cfg(not(target_arch = "wasm32"))]
 pub fn submit_chat_request(messages: Vec<ChatMessage>) {
     eprintln!("[API] submit_chat_request called");
@@ -150,7 +278,28 @@ pub fn submit_chat_request(messages: Vec<ChatMessage>) {
     eprintln!("[API] submit_chat_request complete");
 }
 
-/// Submit a chat request to the Claude API (WASM)
+/// Submit a chat request to the Claude API (WASM version).
+///
+/// Spawns an asynchronous task using `wasm_bindgen_futures` to handle the
+/// network request natively within the browser, and posts the response
+/// via the application's UI event loop.
+///
+/// # Examples
+///
+/// ```rust
+/// #[cfg(target_arch = "wasm32")]
+/// {
+///     use dora_studio::api::{submit_chat_request, ChatMessage, MessageRole};
+///
+///     let messages = vec![
+///         ChatMessage {
+///             role: MessageRole::User,
+///             content: "Hello!".to_string(),
+///         }
+///     ];
+///     submit_chat_request(messages);
+/// }
+/// ```
 #[cfg(target_arch = "wasm32")]
 pub fn submit_chat_request(messages: Vec<ChatMessage>) {
     wasm_bindgen_futures::spawn_local(async move {

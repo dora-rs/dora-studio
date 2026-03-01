@@ -260,7 +260,18 @@ live_design! {
     }
 }
 
-/// Loading state for the traces panel
+/// Loading state for the traces panel.
+///
+/// Represents whether the trace data is currently being fetched,
+/// has encountered an error, or is idle and ready to display.
+///
+/// # Examples
+///
+/// ```rust
+/// use dora_studio::traces::traces_panel::TracesLoadingState;
+///
+/// let state = TracesLoadingState::Loading;
+/// ```
 #[derive(Debug, Clone, Copy, PartialEq, Default)]
 pub enum TracesLoadingState {
     #[default]
@@ -269,6 +280,17 @@ pub enum TracesLoadingState {
     Error,
 }
 
+/// A widget representing the panel for displaying OpenTelemetry traces.
+///
+/// This widget visualizes a list of `Span` items, showing the Service,
+/// Operation, Duration, Status, and Time of each trace.
+///
+/// # Examples
+///
+/// ```text
+/// // In a live_design! block:
+/// <TracesPanel> {}
+/// ```
 #[derive(Live, LiveHook, Widget)]
 pub struct TracesPanel {
     #[deref]
