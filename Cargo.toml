@@ -1,6 +1,5 @@
 [workspace]
 members = [
-    "makepad-demo",
     "dora-studio-shell",
     "dora-studio-widgets",
     "dora-studio-client",
