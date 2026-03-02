@@ -6,8 +6,7 @@
 
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
 [![Rust](https://img.shields.io/badge/rust-2021-orange.svg)](https://www.rust-lang.org)
-[![CI](https://github.com/ravencore06/dora-studio/actions/workflows/ci.yml/badge.svg)](https://github.com/ravencore06/dora-studio/actions/workflows/ci.yml)
-[![Maintenance](https://github.com/ravencore06/dora-studio/actions/workflows/maintenance.yml/badge.svg)](https://github.com/ravencore06/dora-studio/actions/workflows/maintenance.yml)
+
 
 Dora Studio provides a unified visual interface for managing, monitoring, and debugging Dora dataflows. Built with [Makepad](https://github.com/makepad/makepad) for GPU-accelerated rendering and following the architectural patterns established by [MoFA Studio](../mofa-studio/).
 
