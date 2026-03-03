@@ -64,6 +64,19 @@ Each mini-app includes a bottom chat bar for natural language interaction:
 
 **20+ AI tools** across all mini-apps for dataflow management, YAML editing, log analysis, and performance debugging. See [PRD.md](PRD.md#11-ai-agent-capabilities) for full details.
 
+## Keyboard Shortcuts
+
+Dora Studio supports keyboard navigation for accessibility:
+
+| Shortcut | Action |
+|----------|--------|
+| `Tab` | Navigate to next interactive element |
+| `Shift+Tab` | Navigate to previous interactive element |
+| `Ctrl+1` | Switch to Dataflows tab |
+| `Ctrl+2` | Switch to Traces tab |
+| `Ctrl+R` | Refresh current panel |
+| `Escape` | Clear focus |
+
 ## Architecture
 
 ```

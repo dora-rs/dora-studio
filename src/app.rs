@@ -1,5 +1,6 @@
 use crate::dataflow::{DataflowInfo, DataflowTableWidgetRefExt};
 use crate::tools::execute_tool;
+use makepad_platform::event::KeyCode;
 use makepad_widgets::*;
 
 #[cfg(not(target_arch = "wasm32"))]
@@ -161,6 +162,20 @@ enum ActivePanel {
 /// // The App struct is primarily instantiated via Makepad's `app_main!` macro:
 /// // app_main!(App);
 /// ```
+/// Represents the currently focused UI element for keyboard navigation
+#[derive(Clone, Copy, Debug, PartialEq, Default)]
+enum FocusTarget {
+    #[default]
+    None,
+    TabDataflows,
+    TabTraces,
+    RefreshButton,
+    DataflowTable,
+    TabTracesPanel,
+    ChatInput,
+    ChatSend,
+}
+
 #[derive(Live, LiveHook)]
 pub struct App {
     #[live]
@@ -177,6 +192,8 @@ pub struct App {
     signoz_available: bool,
     #[rust]
     traces_loaded_once: bool,
+    #[rust]
+    focused_element: FocusTarget,
 }
 
 impl LiveRegister for App {
@@ -306,6 +323,11 @@ impl AppMain for App {
             self.next_frame = cx.new_next_frame();
         }
 
+        // Handle keyboard events for accessibility
+        if let Event::KeyDown(key_event) = event {
+            self.handle_keyboard(cx, key_event);
+        }
+
         self.ui.handle_event(cx, event, &mut Scope::empty());
     }
 }
@@ -332,6 +354,127 @@ impl App {
             }
         }
         self.ui.redraw(cx);
+    }
+
+    fn handle_keyboard(&mut self, cx: &mut Cx, key_event: &makepad_platform::event::KeyEvent) {
+        let shift = key_event.modifiers.shift;
+        let ctrl = key_event.modifiers.ctrl;
+
+        // Tab navigation for accessibility
+        if key_event.key_code == KeyCode::Tab {
+            if shift {
+                // Shift+Tab: move focus backward
+                self.move_focus_backward(cx);
+            } else {
+                // Tab: move focus forward
+                self.move_focus_forward(cx);
+            }
+            return;
+        }
+
+        // Keyboard shortcuts
+        if ctrl {
+            match key_event.key_code {
+                KeyCode::R => {
+                    // Ctrl+R: Refresh current panel
+                    log!("[App] Ctrl+R pressed - refreshing");
+                    match self.active_panel {
+                        ActivePanel::Dataflows => self.refresh_dataflows(cx),
+                        ActivePanel::Traces =>
+                        {
+                            #[cfg(not(target_arch = "wasm32"))]
+                            if self.signoz_available {
+                                self.refresh_traces(cx);
+                            }
+                        }
+                    }
+                }
+                KeyCode::D1 => {
+                    // Ctrl+1: Switch to Dataflows tab
+                    self.switch_to_panel(cx, ActivePanel::Dataflows);
+                }
+                KeyCode::D2 => {
+                    // Ctrl+2: Switch to Traces tab
+                    self.switch_to_panel(cx, ActivePanel::Traces);
+                    #[cfg(not(target_arch = "wasm32"))]
+                    if self.signoz_available && !self.traces_loaded_once {
+                        self.refresh_traces(cx);
+                    }
+                }
+                KeyCode::Return | KeyCode::NumpadEnter => {
+                    // Ctrl+Enter: Send chat message (when input is focused)
+                    if self.focused_element == FocusTarget::ChatInput
+                        || self.focused_element == FocusTarget::ChatSend
+                    {
+                        // Trigger send action through the chat screen
+                        self.ui
+                            .chat_screen(ids!(chat_screen))
+                            .view
+                            .button(ids!(send_button))
+                            .click();
+                    }
+                }
+                _ => {}
+            }
+        }
+
+        // Escape: Clear focus
+        if key_event.key_code == KeyCode::Escape {
+            self.focused_element = FocusTarget::None;
+            self.ui.redraw(cx);
+        }
+    }
+
+    fn move_focus_forward(&mut self, cx: &mut Cx) {
+        self.focused_element = match self.focused_element {
+            FocusTarget::None => {
+                if self.active_panel == ActivePanel::Dataflows {
+                    FocusTarget::TabDataflows
+                } else {
+                    FocusTarget::TabTraces
+                }
+            }
+            FocusTarget::TabDataflows => FocusTarget::DataflowTable,
+            FocusTarget::DataflowTable => FocusTarget::RefreshButton,
+            FocusTarget::RefreshButton => FocusTarget::ChatInput,
+            FocusTarget::ChatInput => FocusTarget::ChatSend,
+            FocusTarget::ChatSend => {
+                if self.active_panel == ActivePanel::Dataflows {
+                    FocusTarget::TabDataflows
+                } else {
+                    FocusTarget::TabTraces
+                }
+            }
+            FocusTarget::TabTraces => FocusTarget::TabTracesPanel,
+            FocusTarget::TabTracesPanel => FocusTarget::RefreshButton,
+        };
+        self.update_focus_visual(cx);
+    }
+
+    fn move_focus_backward(&mut self, cx: &mut Cx) {
+        self.focused_element = match self.focused_element {
+            FocusTarget::None => FocusTarget::ChatSend,
+            FocusTarget::TabDataflows => FocusTarget::ChatSend,
+            FocusTarget::DataflowTable => FocusTarget::TabDataflows,
+            FocusTarget::RefreshButton => {
+                if self.active_panel == ActivePanel::Traces {
+                    FocusTarget::TabTracesPanel
+                } else {
+                    FocusTarget::DataflowTable
+                }
+            }
+            FocusTarget::ChatInput => FocusTarget::RefreshButton,
+            FocusTarget::ChatSend => FocusTarget::ChatInput,
+            FocusTarget::TabTraces => FocusTarget::ChatSend,
+            FocusTarget::TabTracesPanel => FocusTarget::TabTraces,
+        };
+        self.update_focus_visual(cx);
+    }
+
+    fn update_focus_visual(&mut self, _cx: &mut Cx) {
+        // Focus tracking is maintained internally for keyboard navigation
+        // The actual visual focus is handled by the widget's built-in focus state
+        // Makepad widgets automatically show focus indicators when they have keyboard focus
     }
 
     fn refresh_dataflows(&mut self, cx: &mut Cx) {

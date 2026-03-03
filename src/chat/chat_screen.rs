@@ -126,15 +126,30 @@ live_design! {
                 draw_text: {
                     color: #000000
                     uniform color_hover: #000000
-                    uniform color_focus: #000000
+                    uniform color_focus: #3b82f6
                     uniform color_down: #000000
                     uniform color_empty: #888888
+                }
+                draw_bg: {
+                    color: #ffffff
+                    border_width_left: 2
+                    border_width_right: 2
+                    border_width_top: 2
+                    border_width_bottom: 2
+                    uniform border_color_hover: #3b82f6
+                    uniform border_color_focus: #3b82f6
+                    uniform border_color: #e5e7eb
+                    border_radius: 6
                 }
             }
 
             send_button = <Button> {
                 width: 80, height: 48
                 text: "Send"
+                draw_bg: {
+                    color: #3b82f6
+                    border_radius: 6
+                }
             }
         }
     }
