@@ -1,0 +1,10 @@
+[package]
+name = "dora-studio-widgets"
+description = "Shared UI widgets for Dora Studio"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+makepad-widgets.workspace = true
+dora-studio-client.workspace = true
