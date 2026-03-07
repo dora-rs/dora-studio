@@ -1,0 +1,40 @@
+[package]
+name = "dora-studio-shell"
+description = "Dora Studio - AI Chat Application built with Makepad"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[[bin]]
+name = "dora-studio"
+path = "src/main.rs"
+
+[dependencies]
+makepad-widgets.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+dora-studio-client.workspace = true
+dora-studio-widgets.workspace = true
+dataflow-manager.workspace = true
+telemetry-dashboard.workspace = true
+
+[target.'cfg(not(target_arch = "wasm32"))'.dependencies]
+tokio.workspace = true
+
+[package.metadata.packager]
+product_name = "Dora Studio"
+identifier = "com.mofa.dora-studio"
+category = "Utility"
+before_each_package_command = "robius-packaging-commands before-each-package --binary-name dora-studio --path-to-binary ./target/release/dora-studio"
+resources = [
+    { src = "./dist/resources/makepad_widgets", target = "makepad_widgets" },
+    { src = "./dist/resources/makepad_fonts_chinese_bold", target = "makepad_fonts_chinese_bold" },
+    { src = "./dist/resources/makepad_fonts_chinese_bold_2", target = "makepad_fonts_chinese_bold_2" },
+    { src = "./dist/resources/makepad_fonts_chinese_regular", target = "makepad_fonts_chinese_regular" },
+    { src = "./dist/resources/makepad_fonts_chinese_regular_2", target = "makepad_fonts_chinese_regular_2" },
+    { src = "./dist/resources/makepad_fonts_emoji", target = "makepad_fonts_emoji" },
+]
+out_dir = "./dist"
+
+[package.metadata.packager.macos]
+signing_identity = "-"
