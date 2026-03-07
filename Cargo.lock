@@ -148,7 +148,6 @@ checksum = "be1e0bca6c3637f992fc1cc7cbc52a78c1ef6db076dbf1059c4323d6a2048376"
 name = "dataflow-manager"
 version = "0.1.0"
 dependencies = [
- "makepad-flow",
  "makepad-widgets",
  "serde",
  "serde_json",
@@ -654,14 +653,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "makepad-charts"
-version = "0.1.0"
-source = "git+https://github.com/mofa-org/makepad-chart#7fe9fc2f810ed1f23b1646472b186a5f5037ac8e"
-dependencies = [
- "makepad-widgets",
-]
-
-[[package]]
 name = "makepad-derive-live"
 version = "1.0.0"
 source = "git+https://github.com/makepad/makepad?branch=dev#8350b6bf86f603ad55441bf82d05feb51f4fd383"
@@ -713,14 +704,6 @@ version = "1.0.0"
 source = "git+https://github.com/makepad/makepad?branch=dev#8350b6bf86f603ad55441bf82d05feb51f4fd383"
 dependencies = [
  "makepad-micro-serde",
-]
-
-[[package]]
-name = "makepad-flow"
-version = "0.1.0"
-source = "git+https://github.com/mofa-org/makepad-flow#bf5789bbff9989001077715a33e17284a307149c"
-dependencies = [
- "makepad-widgets",
 ]
 
 [[package]]
@@ -1655,7 +1638,6 @@ name = "telemetry-dashboard"
 version = "0.1.0"
 dependencies = [
  "dora-studio-client",
- "makepad-charts",
  "makepad-widgets",
 ]
 

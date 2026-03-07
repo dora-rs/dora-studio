@@ -7,5 +7,5 @@ license.workspace = true
 
 [dependencies]
 makepad-widgets.workspace = true
-makepad-charts.workspace = true
+
 dora-studio-client.workspace = true

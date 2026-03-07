@@ -33,109 +33,308 @@ live_design! {
     App = {{App}} {
         ui: <Root> {
             main_window = <Window> {
-                window: { title: "Dora Studio" }
+                window: { title: "Dora Studio"}
                 body = <View> {
                     width: Fill, height: Fill
-                    flow: Down
+                    flow: Right
                     show_bg: true
                     draw_bg: { color: (MAIN_BG) }
 
-                    // Shared title bar with tabs
-                    <View> {
-                        width: Fill, height: 48
-                        flow: Right
+                    // Sidebar 
+                    sidebar = <View> {
+                        height: Fill
+                        width: 200
+                        flow: Down
                         show_bg: true
-                        draw_bg: { color: (HEADER_BG) }
-                        padding: { left: 16, right: 16 }
-                        align: { y: 0.5 }
-                        spacing: 8
+                        draw_bg: { color: (SIDEBAR_BG) }
 
-                        <Label> {
-                            width: Fit, height: Fit
-                            draw_text: {
-                                color: (HEADER_TEXT),
-                                text_style: { font_size: 16.0 }
+                        <View> {
+                            width: Fill, height: 48
+                            flow: Right
+                            show_bg: true
+                            draw_bg: { color: (HEADER_BG) }
+                            padding: { left: 16, right: 16 }
+                            align: { y: 0.5 }
+                            spacing: 8
+
+                            <Label> {
+                                width: Fit, height: Fit
+                                draw_text: {
+                                    color: (HEADER_TEXT),
+                                    text_style: { font_size: 20.0 } // ask for standard font size
+                                }
+                                text: "Dora Studio"
+                                // align: {x:0.5}
                             }
-                            text: "Dora Studio"
+
                         }
 
-                        // Spacer between title and tabs
-                        <View> { width: 16, height: Fit }
-
-                        tab_dataflows = <Button> {
-                            width: 100, height: 32
-                            text: "Dataflows"
-                            draw_text: { text_style: { font_size: 12.0 } }
+                        // Divider line
+                        <View> {
+                            width: Fill, height: 1
+                            show_bg: true
+                            draw_bg: {
+                                color: (DIVIDER_COLOR) }
                         }
 
-                        tab_traces = <Button> {
-                            width: 80, height: 32
-                            text: "Traces"
-                            draw_text: { text_style: { font_size: 12.0 } }
-                        }
+                        // <View> {
+                        //     width: Fill, height: 32
+                        //     flow: Right
+                        //     show_bg: true
+                        //     draw_bg: { color: (SIDEBAR_BG) }
+                        //     // padding: { left: 16, right: 16 }
+                        //     align: { y: 0.5 }
+                        //     spacing: 8
 
-                        // Spacer to push right-side items
-                        <View> { width: Fill, height: Fit }
+                        // // TODO: icons , background , Click switches content area
 
-                        connection_label = <Label> {
-                            width: Fit, height: Fit
-                            draw_text: {
-                                color: (HEADER_TEXT),
-                                text_style: { font_size: 11.0 }
+                        //     tab_dataflows = <Button> {
+                        //         width: Fill , height: 50
+                        //         text: "Dataflows"
+                        //         draw_text: {
+                        //             color: (HEADER_TEXT),
+                        //             text_style: { font_size: 14.0 } }
+                        //     }
+                        // }
+                        // // Divider line
+                        // <View> {
+                        //     width: Fill, height: 1
+                        //     show_bg: true
+                        //     draw_bg: {
+                        //         color: (DIVIDER_COLOR) }
+                        // }
+
+                        // <View> {
+                        //     width: Fill, height: 32
+                        //     flow: Right
+                        //     show_bg: true
+                        //     draw_bg: { color: (SIDEBAR_BG) }
+                        //     // padding: { left: 16, right: 16 }
+                        //     align: { y: 0.5 }
+                        //     spacing: 8
+
+                        //     tab_traces = <Button> {
+                        //         width: Fill, height: 50
+                        //         text: "Traces"
+                        //         draw_text: {
+                        //             color: (HEADER_TEXT),
+                        //             text_style: { font_size: 14.0
+                        //             } }
+                        //     }
+                        // }
+
+                        // // Divider line
+                        // <View> {
+                        //     width: Fill, height: 1
+                        //     show_bg: true
+                        //     draw_bg: {
+                        //         color: (DIVIDER_COLOR) }
+                        // }
+
+                        <View> {
+                            width: Fill, height: 32
+                            flow: Right
+                            show_bg: true
+                            draw_bg: { color: (SIDEBAR_BG) }
+                            // padding: { left: 16, right: 16 }
+                            align: { y: 0.5 }
+                            spacing: 8
+
+                             // TODO: icons , background , Click switches content area
+
+                            tab_dataflows = <Button> {
+                                width: Fill , height: 50
+                                text: "Dataflow Manager"
+                                draw_text: {
+                                    color: (HEADER_TEXT),
+                                    text_style: { font_size: 14.0 } }
                             }
-                            text: ""
+                        }
+                        // Divider line
+                        <View> {
+                            width: Fill, height: 1
+                            show_bg: true
+                            draw_bg: {
+                                color: (DIVIDER_COLOR) }
                         }
 
-                        refresh_button = <Button> {
-                            width: 80, height: 32
-                            text: "Refresh"
-                            draw_text: { text_style: { font_size: 12.0 } }
+                        <View> {
+                            width: Fill, height: 32
+                            flow: Right
+                            show_bg: true
+                            draw_bg: { color: (SIDEBAR_BG) }
+                            // padding: { left: 16, right: 16 }
+                            align: { y: 0.5 }
+                            spacing: 8
+
+                            // TODO: icons , background , Click switches content area
+                            tab_yaml_editor = <Button> {
+                                width: Fill, height: 50
+                                text: "YAML Editor"
+                                draw_text: {
+                                    color: (HEADER_TEXT),
+                                    text_style: { font_size: 14.0
+                                    } }
+                            }
                         }
+                        // Divider line
+                        <View> {
+                            width: Fill, height: 1
+                            show_bg: true
+                            draw_bg: {
+                                color: (DIVIDER_COLOR) }
+                        }
+
+                        <View> {
+                            width: Fill, height: 32
+                            flow: Right
+                            show_bg: true
+                            draw_bg: { color: (SIDEBAR_BG) }
+                            // padding: { left: 16, right: 16 }
+                            align: { y: 0.5 }
+                            spacing: 8
+
+                            // TODO: icons , background , Click switches content area
+                            tab_log_viewer = <Button> {
+                                width: Fill, height: 50
+                                text: "Log Viewer"
+                                draw_text: {
+                                    color: (HEADER_TEXT),
+                                    text_style: { font_size: 14.0
+                                    } }
+                            }
+                        }
+
+                        // Divider line
+                        <View> {
+                            width: Fill, height: 1
+                            show_bg: true
+                            draw_bg: {
+                                color: (DIVIDER_COLOR) }
+                        }
+
+                        <View> {
+                            width: Fill, height: 32
+                            flow: Right
+                            show_bg: true
+                            draw_bg: { color: (SIDEBAR_BG) }
+                            // padding: { left: 16, right: 16 }
+                            align: { y: 0.5 }
+                            spacing: 8
+
+                             // TODO: icons , background Click switches content area
+
+                            tab_dataflows = <Button> {
+                                width: Fill , height: 50
+                                text: "Telemetry Dashboard"
+                                draw_text: {
+                                    color: (HEADER_TEXT),
+                                    text_style: { font_size: 14.0 } }
+                            }
+                        }
+                        // Divider line
+                        <View> {
+                            width: Fill, height: 1
+                            show_bg: true
+                            draw_bg: {
+                                color: (DIVIDER_COLOR) }
+                        }
+
                     }
 
-                    // Panels container
-                    <View> {
+                    main_content = <View> {
                         width: Fill, height: Fill
                         flow: Down
 
-                        // Dataflow panel (visible by default)
-                        dataflow_view = <View> {
+                        // Shared title bar with tabs
+                        <View> {
+                            width: Fill, height: 48
+                            flow: Right
+                            show_bg: true
+                            draw_bg: { color: (HEADER_BG) }
+                            padding: { left: 16, right: 16 }
+                            align: { y: 0.5 }
+                            spacing: 8
+
+                            // Spacer between title and tabs
+                            <View> { width: 16, height: Fit }
+
+                            tab_dataflows = <Button> {
+                                width: 100, height: 32
+                                text: "Dataflows"
+                                draw_text: { text_style: { font_size: 12.0 } }
+                            }
+
+                            tab_traces = <Button> {
+                                width: 80, height: 32
+                                text: "Traces"
+                                draw_text: { text_style: { font_size: 12.0 } }
+                            }
+
+                            // Spacer to push right-side items
+                            <View> { width: Fill, height: Fit }
+
+                            connection_label = <Label> {
+                                width: Fit, height: Fit
+                                draw_text: {
+                                    color: (HEADER_TEXT),
+                                    text_style: { font_size: 11.0 }
+                                }
+                                text: ""
+                            }
+
+                            refresh_button = <Button> {
+                                width: 80, height: 32
+                                text: "Refresh"
+                                draw_text: { text_style: { font_size: 14.0 } }
+                            }
+                        }
+
+                        // Panels container
+                        <View> {
                             width: Fill, height: Fill
                             flow: Down
-                            align: { x: 0.0, y: 0.0 }
-                            padding: { top: 0, left: 16, right: 16, bottom: 16 }
 
-                            dataflow_table = <DataflowTable> {}
+                            // Dataflow panel (visible by default)
+                            dataflow_view = <View> {
+                                width: Fill, height: Fill
+                                flow: Down
+                                align: { x: 0.0, y: 0.0 }
+                                padding: { top: 0, left: 16, right: 16, bottom: 16 }
+
+                                dataflow_table = <DataflowTable> {}
+                            }
+
+                            // Traces panel (hidden by default)
+                            traces_view = <View> {
+                                width: Fill, height: 0
+                                flow: Down
+                                align: { x: 0.0, y: 0.0 }
+                                padding: { top: 0, left: 16, right: 16, bottom: 16 }
+
+                                traces_panel = <TracesPanel> {}
+                            }
                         }
 
-                        // Traces panel (hidden by default)
-                        traces_view = <View> {
-                            width: Fill, height: 0
+                        // Divider line
+                        <View> {
+                            width: Fill, height: 1
+                            show_bg: true
+                            draw_bg: { color: (DIVIDER_COLOR) }
+                        }
+
+                        // Bottom panel - Chat
+                        <View> {
+                            width: Fill, height: 300
                             flow: Down
-                            align: { x: 0.0, y: 0.0 }
-                            padding: { top: 0, left: 16, right: 16, bottom: 16 }
+                            show_bg: true
+                            draw_bg: { color: #ffffff }
 
-                            traces_panel = <TracesPanel> {}
+                            <ChatScreen> {}
                         }
-                    }
-
-                    // Divider line
-                    <View> {
-                        width: Fill, height: 1
-                        show_bg: true
-                        draw_bg: { color: (DIVIDER_COLOR) }
-                    }
-
-                    // Bottom panel - Chat
-                    <View> {
-                        width: Fill, height: 300
-                        flow: Down
-                        show_bg: true
-                        draw_bg: { color: #ffffff }
-
-                        <ChatScreen> {}
                     }
                 }
+
             }
         }
     }
@@ -363,7 +562,11 @@ impl App {
     }
 
     #[cfg(not(target_arch = "wasm32"))]
-    fn handle_signoz_response(&mut self, cx: &mut Cx, response: dora_studio_client::otlp::SignozResponse) {
+    fn handle_signoz_response(
+        &mut self,
+        cx: &mut Cx,
+        response: dora_studio_client::otlp::SignozResponse,
+    ) {
         match response {
             dora_studio_client::otlp::SignozResponse::HealthOk => {
                 log!("[App] SigNoz connected");
