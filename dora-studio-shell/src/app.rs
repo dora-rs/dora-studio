@@ -43,7 +43,7 @@ live_design! {
                     // Sidebar 
                     sidebar = <View> {
                         height: Fill
-                        width: 200
+                        width: 250
                         flow: Down
                         show_bg: true
                         draw_bg: { color: (SIDEBAR_BG) }
@@ -86,7 +86,7 @@ live_design! {
                         //     align: { y: 0.5 }
                         //     spacing: 8
 
-                        // // TODO: icons , background , Click switches content area
+                        // // TODO:background , Click switches content area
 
                         //     tab_dataflows = <Button> {
                         //         width: Fill , height: 50
@@ -140,11 +140,11 @@ live_design! {
                             align: { y: 0.5 }
                             spacing: 8
 
-                             // TODO: icons , background , Click switches content area
+                             // TODO:background , Click switches content area
 
                             tab_dataflows = <Button> {
                                 width: Fill , height: 50
-                                text: "Dataflow Manager"
+                                text: "📈 Dataflow Manager"
                                 draw_text: {
                                     color: (HEADER_TEXT),
                                     text_style: { font_size: 14.0 } }
@@ -167,10 +167,10 @@ live_design! {
                             align: { y: 0.5 }
                             spacing: 8
 
-                            // TODO: icons , background , Click switches content area
+                            // TODO:background , Click switches content area
                             tab_yaml_editor = <Button> {
                                 width: Fill, height: 50
-                                text: "YAML Editor"
+                                text: "📄 YAML Editor"
                                 draw_text: {
                                     color: (HEADER_TEXT),
                                     text_style: { font_size: 14.0
@@ -194,10 +194,10 @@ live_design! {
                             align: { y: 0.5 }
                             spacing: 8
 
-                            // TODO: icons , background , Click switches content area
+                            // TODO:background , Click switches content area
                             tab_log_viewer = <Button> {
                                 width: Fill, height: 50
-                                text: "Log Viewer"
+                                text: "🔗 Log Viewer"
                                 draw_text: {
                                     color: (HEADER_TEXT),
                                     text_style: { font_size: 14.0
@@ -222,11 +222,11 @@ live_design! {
                             align: { y: 0.5 }
                             spacing: 8
 
-                             // TODO: icons , background Click switches content area
+                             // TODO:background Click switches content area
 
-                            tab_dataflows = <Button> {
+                            tab_telemetry = <Button> {
                                 width: Fill , height: 50
-                                text: "Telemetry Dashboard"
+                                text: "📡 Telemetry Dashboard"
                                 draw_text: {
                                     color: (HEADER_TEXT),
                                     text_style: { font_size: 14.0 } }
