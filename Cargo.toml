@@ -17,6 +17,7 @@ repository = "https://github.com/mofa-org/dora-studio"
 # UI Framework
 makepad-widgets = { git = "https://github.com/makepad/makepad", branch = "dev" }
 
+
 # Serialization
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
