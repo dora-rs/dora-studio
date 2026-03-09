@@ -1,11 +1,11 @@
-use crate::dataflow::{DataflowInfo, DataflowTableWidgetRefExt};
-use crate::tools::execute_tool;
+use dataflow_manager::{DataflowInfo, DataflowTableWidgetRefExt};
+use dora_studio_client::tools::execute_tool;
 use makepad_widgets::*;
 
 #[cfg(not(target_arch = "wasm32"))]
-use crate::otlp::bridge;
+use dora_studio_client::otlp::bridge;
 #[cfg(not(target_arch = "wasm32"))]
-use crate::traces::TracesPanelWidgetRefExt;
+use telemetry_dashboard::TracesPanelWidgetRefExt;
 
 // Auto-refresh interval in seconds
 const AUTO_REFRESH_INTERVAL: f64 = 5.0;
@@ -15,9 +15,9 @@ live_design! {
     use link::shaders::*;
     use link::widgets::*;
 
-    use crate::chat::chat_screen::ChatScreen;
-    use crate::dataflow::dataflow_table::DataflowTable;
-    use crate::traces::traces_panel::TracesPanel;
+    use dora_studio_widgets::chat_screen::ChatScreen;
+    use dataflow_manager::dataflow_table::DataflowTable;
+    use telemetry_dashboard::traces_panel::TracesPanel;
 
     // Colors
     SIDEBAR_BG = #1e293b
@@ -171,11 +171,10 @@ pub struct App {
 impl LiveRegister for App {
     fn live_register(cx: &mut Cx) {
         crate::makepad_widgets::live_design(cx);
-        crate::chat::live_design(cx);
-        crate::dataflow::live_design(cx);
+        dora_studio_widgets::live_design(cx);
+        dataflow_manager::live_design(cx);
         #[cfg(not(target_arch = "wasm32"))]
-        crate::traces::live_design(cx);
-        // Light theme
+        telemetry_dashboard::live_design(cx);
         cx.link(live_id!(theme), live_id!(theme_desktop_light));
     }
 }
@@ -183,7 +182,7 @@ impl LiveRegister for App {
 impl MatchEvent for App {
     fn handle_startup(&mut self, cx: &mut Cx) {
         // Initialize API key from environment variable
-        crate::api::init_api_key_from_env();
+        dora_studio_client::api::init_api_key_from_env();
 
         // Initialize SigNoz bridge from env vars
         #[cfg(not(target_arch = "wasm32"))]
@@ -356,7 +355,7 @@ impl App {
         let panel = self.ui.traces_panel(ids!(traces_panel));
         panel.set_loading(cx);
 
-        let query = crate::otlp::types::TraceQuery {
+        let query = dora_studio_client::otlp::types::TraceQuery {
             limit: Some(100),
             ..Default::default()
         };
@@ -364,26 +363,30 @@ impl App {
     }
 
     #[cfg(not(target_arch = "wasm32"))]
-    fn handle_signoz_response(&mut self, cx: &mut Cx, response: crate::otlp::SignozResponse) {
+    fn handle_signoz_response(
+        &mut self,
+        cx: &mut Cx,
+        response: dora_studio_client::otlp::SignozResponse,
+    ) {
         match response {
-            crate::otlp::SignozResponse::HealthOk => {
+            dora_studio_client::otlp::SignozResponse::HealthOk => {
                 log!("[App] SigNoz connected");
                 self.ui
                     .label(ids!(connection_label))
                     .set_text(cx, "Connected");
             }
-            crate::otlp::SignozResponse::HealthError(e) => {
+            dora_studio_client::otlp::SignozResponse::HealthError(e) => {
                 log!("[App] SigNoz health error: {}", e);
                 let msg = format!("SigNoz: {}", truncate_str(&e, 40));
                 self.ui.label(ids!(connection_label)).set_text(cx, &msg);
             }
-            crate::otlp::SignozResponse::Traces(spans) => {
+            dora_studio_client::otlp::SignozResponse::Traces(spans) => {
                 log!("[App] Received {} trace spans", spans.len());
                 self.traces_loaded_once = true;
                 let panel = self.ui.traces_panel(ids!(traces_panel));
                 panel.set_spans(cx, spans);
             }
-            crate::otlp::SignozResponse::TracesError(e) => {
+            dora_studio_client::otlp::SignozResponse::TracesError(e) => {
                 log!("[App] Traces query error: {}", e);
                 let panel = self.ui.traces_panel(ids!(traces_panel));
                 panel.set_error(cx, &e);

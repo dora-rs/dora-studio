@@ -1,4 +1,4 @@
-use crate::api::{
+use dora_studio_client::api::{
     submit_chat_request, take_pending_response, ChatMessage, ChatResponse, MessageRole,
 };
 use makepad_widgets::*;
