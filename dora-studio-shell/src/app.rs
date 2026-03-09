@@ -242,95 +242,154 @@ live_design! {
 
                     }
 
-                    main_content = <View> {
+                    app_container = <View> {
                         width: Fill, height: Fill
                         flow: Down
-
-                        // Shared title bar with tabs
-                        <View> {
-                            width: Fill, height: 48
-                            flow: Right
-                            show_bg: true
-                            draw_bg: { color: (HEADER_BG) }
-                            padding: { left: 16, right: 16 }
-                            align: { y: 0.5 }
-                            spacing: 8
-
-                            // Spacer between title and tabs
-                            <View> { width: 16, height: Fit }
-
-                            tab_dataflows = <Button> {
-                                width: 100, height: 32
-                                text: "Dataflows"
-                                draw_text: { text_style: { font_size: 12.0 } }
-                            }
-
-                            tab_traces = <Button> {
-                                width: 80, height: 32
-                                text: "Traces"
-                                draw_text: { text_style: { font_size: 12.0 } }
-                            }
-
-                            // Spacer to push right-side items
-                            <View> { width: Fill, height: Fit }
-
-                            connection_label = <Label> {
-                                width: Fit, height: Fit
-                                draw_text: {
-                                    color: (HEADER_TEXT),
-                                    text_style: { font_size: 11.0 }
-                                }
-                                text: ""
-                            }
-
-                            refresh_button = <Button> {
-                                width: 80, height: 32
-                                text: "Refresh"
-                                draw_text: { text_style: { font_size: 14.0 } }
-                            }
-                        }
-
-                        // Panels container
-                        <View> {
+                        
+                        dataflow_manager_app = <View> {
                             width: Fill, height: Fill
                             flow: Down
 
-                            // Dataflow panel (visible by default)
-                            dataflow_view = <View> {
+                            // Shared title bar with tabs
+                            <View> {
+                                width: Fill, height: 48
+                                flow: Right
+                                show_bg: true
+                                draw_bg: { color: (HEADER_BG) }
+                                padding: { left: 16, right: 16 }
+                                align: { y: 0.5 }
+                                spacing: 8
+
+                                // Spacer between title and tabs
+                                <View> { width: 16, height: Fit }
+
+                                tab_dataflows = <Button> {
+                                    width: 100, height: 32
+                                    text: "Dataflows"
+                                    draw_text: { text_style: { font_size: 12.0 } }
+                                }
+
+                                tab_traces = <Button> {
+                                    width: 80, height: 32
+                                    text: "Traces"
+                                    draw_text: { text_style: { font_size: 12.0 } }
+                                }
+
+                                // Spacer to push right-side items
+                                <View> { width: Fill, height: Fit }
+
+                                connection_label = <Label> {
+                                    width: Fit, height: Fit
+                                    draw_text: {
+                                        color: (HEADER_TEXT),
+                                        text_style: { font_size: 11.0 }
+                                    }
+                                    text: ""
+                                }
+
+                                refresh_button = <Button> {
+                                    width: 80, height: 32
+                                    text: "Refresh"
+                                    draw_text: { text_style: { font_size: 14.0 } }
+                                }
+                            }
+
+                            // Panels container
+                            <View> {
                                 width: Fill, height: Fill
                                 flow: Down
-                                align: { x: 0.0, y: 0.0 }
-                                padding: { top: 0, left: 16, right: 16, bottom: 16 }
 
-                                dataflow_table = <DataflowTable> {}
+                                // Dataflow panel (visible by default)
+                                dataflow_view = <View> {
+                                    width: Fill, height: Fill
+                                    flow: Down
+                                    align: { x: 0.0, y: 0.0 }
+                                    padding: { top: 0, left: 16, right: 16, bottom: 16 }
+
+                                    dataflow_table = <DataflowTable> {}
+                                }
+
+                                // Traces panel (hidden by default)
+                                traces_view = <View> {
+                                    width: Fill, height: 0
+                                    flow: Down
+                                    align: { x: 0.0, y: 0.0 }
+                                    padding: { top: 0, left: 16, right: 16, bottom: 16 }
+
+                                    traces_panel = <TracesPanel> {}
+                                }
                             }
 
-                            // Traces panel (hidden by default)
-                            traces_view = <View> {
-                                width: Fill, height: 0
+                            // Divider line
+                            <View> {
+                                width: Fill, height: 1
+                                show_bg: true
+                                draw_bg: { color: (DIVIDER_COLOR) }
+                            }
+
+                            // Bottom panel - Chat
+                            <View> {
+                                width: Fill, height: 300
                                 flow: Down
-                                align: { x: 0.0, y: 0.0 }
-                                padding: { top: 0, left: 16, right: 16, bottom: 16 }
+                                show_bg: true
+                                draw_bg: { color: #ffffff }
 
-                                traces_panel = <TracesPanel> {}
+                                <ChatScreen> {}
                             }
                         }
 
-                        // Divider line
-                        <View> {
-                            width: Fill, height: 1
-                            show_bg: true
-                            draw_bg: { color: (DIVIDER_COLOR) }
-                        }
-
-                        // Bottom panel - Chat
-                        <View> {
-                            width: Fill, height: 300
+                        // Empty placeholder for YAML Editor App
+                        yaml_editor_app = <View> {
+                            width: Fill, height: 0
                             flow: Down
                             show_bg: true
-                            draw_bg: { color: #ffffff }
+                            draw_bg: { color: (MAIN_BG) }
+                            padding: 32
+                            align: { x: 0.5, y: 0.5 }
 
-                            <ChatScreen> {}
+                            <Label> {
+                                text: "YAML Editor (Coming Soon)"
+                                draw_text: {
+                                    color: (HEADER_BG),
+                                    text_style: { font_size: 24.0 }
+                                }
+                            }
+                        }
+
+                        // Empty placeholder for Log Viewer App
+                        log_viewer_app = <View> {
+                            width: Fill, height: 0
+                            flow: Down
+                            show_bg: true
+                            draw_bg: { color: (MAIN_BG) }
+                            padding: 32
+                            align: { x: 0.5, y: 0.5 }
+
+                            <Label> {
+                                text: "Log Viewer (Coming Soon)"
+                                draw_text: {
+                                    color: (HEADER_BG),
+                                    text_style: { font_size: 24.0 }
+                                }
+                            }
+                        }
+
+                        // Empty placeholder for Telemetry Dashboard App
+                        telemetry_dashboard_app = <View> {
+                            width: Fill, height: 0
+                            flow: Down
+                            show_bg: true
+                            draw_bg: { color: (MAIN_BG) }
+                            padding: 32
+                            align: { x: 0.5, y: 0.5 }
+
+                            <Label> {
+                                text: "Telemetry Dashboard (Coming Soon)"
+                                draw_text: {
+                                    color: (HEADER_BG),
+                                    text_style: { font_size: 24.0 }
+                                }
+                            }
                         }
                     }
                 }
@@ -340,6 +399,15 @@ live_design! {
 }
 
 app_main!(App);
+
+#[derive(Debug, Clone, Copy, PartialEq, Default)]
+enum ActiveApp {
+    #[default]
+    DataflowManager,
+    YamlEditor,
+    LogViewer,
+    TelemetryDashboard,
+}
 
 #[derive(Debug, Clone, Copy, PartialEq, Default)]
 enum ActivePanel {
@@ -358,6 +426,8 @@ pub struct App {
     initialized: bool,
     #[rust]
     last_refresh_time: f64,
+    #[rust]
+    active_app: ActiveApp,
     #[rust]
     active_panel: ActivePanel,
     #[rust]
@@ -396,9 +466,23 @@ impl MatchEvent for App {
     }
 
     fn handle_actions(&mut self, cx: &mut Cx, actions: &Actions) {
-        // Handle tab buttons
+        // Handle Sidebar App Buttons
         if self.ui.button(ids!(tab_dataflows)).clicked(actions) {
-            self.switch_to_panel(cx, ActivePanel::Dataflows);
+            // Note: Currently tab_dataflows ID might be conflicting with the inner one, let's just log and switch
+            log!("[App] Switching to Dataflow Manager App");
+            self.switch_to_app(cx, ActiveApp::DataflowManager);
+        }
+        if self.ui.button(ids!(tab_yaml_editor)).clicked(actions) {
+            log!("[App] Switching to YAML Editor App");
+            self.switch_to_app(cx, ActiveApp::YamlEditor);
+        }
+        if self.ui.button(ids!(tab_log_viewer)).clicked(actions) {
+            log!("[App] Switching to Log Viewer App");
+            self.switch_to_app(cx, ActiveApp::LogViewer);
+        }
+        if self.ui.button(ids!(tab_telemetry)).clicked(actions) {
+            log!("[App] Switching to Telemetry Dashboard App");
+            self.switch_to_app(cx, ActiveApp::TelemetryDashboard);
         }
 
         if self.ui.button(ids!(tab_traces)).clicked(actions) {
@@ -463,17 +547,20 @@ impl AppMain for App {
                 if elapsed >= AUTO_REFRESH_INTERVAL {
                     self.last_refresh_time = ne.time;
 
-                    match self.active_panel {
-                        ActivePanel::Dataflows => {
-                            log!("[App] Auto-refresh triggered after {:.1}s", elapsed);
-                            self.refresh_dataflows(cx);
-                        }
-                        ActivePanel::Traces =>
-                        {
-                            #[cfg(not(target_arch = "wasm32"))]
-                            if self.signoz_available {
-                                log!("[App] Auto-refresh traces after {:.1}s", elapsed);
-                                self.refresh_traces(cx);
+                    // Only refresh if Dataflow Manager is active
+                    if self.active_app == ActiveApp::DataflowManager {
+                        match self.active_panel {
+                            ActivePanel::Dataflows => {
+                                log!("[App] Auto-refresh triggered after {:.1}s", elapsed);
+                                self.refresh_dataflows(cx);
+                            }
+                            ActivePanel::Traces =>
+                            {
+                                #[cfg(not(target_arch = "wasm32"))]
+                                if self.signoz_available {
+                                    log!("[App] Auto-refresh traces after {:.1}s", elapsed);
+                                    self.refresh_traces(cx);
+                                }
                             }
                         }
                     }
@@ -497,6 +584,32 @@ impl AppMain for App {
 }
 
 impl App {
+    fn switch_to_app(&mut self, cx: &mut Cx, app: ActiveApp) {
+        self.active_app = app;
+
+        // Reset all to 0 height
+        self.ui.view(ids!(dataflow_manager_app)).apply_over(cx, live! { height: 0 });
+        self.ui.view(ids!(yaml_editor_app)).apply_over(cx, live! { height: 0 });
+        self.ui.view(ids!(log_viewer_app)).apply_over(cx, live! { height: 0 });
+        self.ui.view(ids!(telemetry_dashboard_app)).apply_over(cx, live! { height: 0 });
+
+        // Set the active one to Fill height
+        match app {
+            ActiveApp::DataflowManager => {
+                self.ui.view(ids!(dataflow_manager_app)).apply_over(cx, live! { height: Fill });
+            }
+            ActiveApp::YamlEditor => {
+                self.ui.view(ids!(yaml_editor_app)).apply_over(cx, live! { height: Fill });
+            }
+            ActiveApp::LogViewer => {
+                self.ui.view(ids!(log_viewer_app)).apply_over(cx, live! { height: Fill });
+            }
+            ActiveApp::TelemetryDashboard => {
+                self.ui.view(ids!(telemetry_dashboard_app)).apply_over(cx, live! { height: Fill });
+            }
+        }
+        self.ui.redraw(cx);
+    }
     fn switch_to_panel(&mut self, cx: &mut Cx, panel: ActivePanel) {
         self.active_panel = panel;
         match panel {
