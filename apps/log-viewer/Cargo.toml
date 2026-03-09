@@ -1,0 +1,8 @@
+[package]
+name = "log-viewer"
+description = "Dora Studio log viewer"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]

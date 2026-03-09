@@ -1,3 +1,5 @@
+pub use makepad_widgets;
+
 pub mod dataflow_table;
 
 pub use dataflow_table::{

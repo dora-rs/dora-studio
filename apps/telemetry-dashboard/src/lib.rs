@@ -1,3 +1,5 @@
+pub use makepad_widgets;
+
 pub mod traces_panel;
 
 pub use traces_panel::{TracesPanel, TracesPanelRef, TracesPanelWidgetRefExt};

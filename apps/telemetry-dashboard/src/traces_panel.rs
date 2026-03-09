@@ -2,7 +2,7 @@ use makepad_widgets::*;
 use std::cell::RefMut;
 use std::time::{SystemTime, UNIX_EPOCH};
 
-use crate::otlp::types::Span;
+use dora_studio_client::otlp::types::Span;
 
 live_design! {
     use link::theme::*;
