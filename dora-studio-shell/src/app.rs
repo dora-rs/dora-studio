@@ -363,7 +363,11 @@ impl App {
     }
 
     #[cfg(not(target_arch = "wasm32"))]
-    fn handle_signoz_response(&mut self, cx: &mut Cx, response: dora_studio_client::otlp::SignozResponse) {
+    fn handle_signoz_response(
+        &mut self,
+        cx: &mut Cx,
+        response: dora_studio_client::otlp::SignozResponse,
+    ) {
         match response {
             dora_studio_client::otlp::SignozResponse::HealthOk => {
                 log!("[App] SigNoz connected");
