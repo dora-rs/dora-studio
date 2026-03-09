@@ -1,5 +1,8 @@
 pub use makepad_widgets;
 
+pub mod theme;
+pub use theme::*;
+
 pub mod chat_screen;
 
 use makepad_widgets::Cx;
