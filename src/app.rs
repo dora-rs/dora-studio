@@ -234,12 +234,38 @@ impl MatchEvent for App {
 
         if let Some(uuid) = table.stop_clicked(actions) {
             log!("[App] Stop button clicked for {}", uuid);
-            self.stop_dataflow(cx, &uuid);
+
+            // If dataflow is not running, show a UX message instead of calling stop.
+            if let Some(status) = table.status_for_uuid(&uuid) {
+                if !status.eq_ignore_ascii_case("running") {
+                    self.ui
+                        .label(ids!(connection_label))
+                        .set_text(cx, "No action: dataflow is already finished/failed");
+                } else {
+                    self.stop_dataflow(cx, &uuid);
+                }
+            } else {
+                // Fallback: if we can't find the status, keep existing behavior.
+                self.stop_dataflow(cx, &uuid);
+            }
         }
 
         if let Some(uuid) = table.destroy_clicked(actions) {
             log!("[App] Destroy button clicked for {}", uuid);
-            self.destroy_dataflow(cx, &uuid);
+
+            // If dataflow is not running, show a UX message instead of calling destroy.
+            if let Some(status) = table.status_for_uuid(&uuid) {
+                if !status.eq_ignore_ascii_case("running") {
+                    self.ui
+                        .label(ids!(connection_label))
+                        .set_text(cx, "No action: dataflow is already finished/failed");
+                } else {
+                    self.destroy_dataflow(cx, &uuid);
+                }
+            } else {
+                // Fallback: if we can't find the status, keep existing behavior.
+                self.destroy_dataflow(cx, &uuid);
+            }
         }
 
         if let Some(uuid) = table.logs_clicked(actions) {
