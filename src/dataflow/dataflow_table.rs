@@ -652,6 +652,15 @@ impl DataflowTableRef {
         }
     }
 
+    /// Get the status string for a given UUID, if present in the table.
+    pub fn status_for_uuid(&self, uuid: &str) -> Option<String> {
+        if let Some(inner) = self.borrow() {
+            inner.get_dataflow_by_uuid(uuid).map(|df| df.status.clone())
+        } else {
+            None
+        }
+    }
+
     /// Check if a DataflowTableAction was triggered
     pub fn action(&self, actions: &Actions) -> Option<DataflowTableAction> {
         if let Some(item) = actions.find_widget_action(self.widget_uid()) {
