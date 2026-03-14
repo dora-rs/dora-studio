@@ -1,0 +1,11 @@
+[package]
+name = "telemetry-dashboard"
+description = "Dora Studio telemetry and traces dashboard"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+makepad-widgets.workspace = true
+makepad-charts.workspace = true
+dora-studio-client.workspace = true

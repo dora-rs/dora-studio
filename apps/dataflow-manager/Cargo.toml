@@ -1,0 +1,12 @@
+[package]
+name = "dataflow-manager"
+description = "Dora Studio dataflow management panel"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+makepad-widgets.workspace = true
+makepad-flow.workspace = true
+serde.workspace = true
+serde_json.workspace = true
