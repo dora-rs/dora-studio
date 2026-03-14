@@ -8,6 +8,11 @@ version = "0.1.8"
 source = "git+https://github.com/makepad/makepad?branch=dev#8350b6bf86f603ad55441bf82d05feb51f4fd383"
 
 [[package]]
+name = "ab_glyph_rasterizer"
+version = "0.1.8"
+source = "git+https://github.com/makepad/makepad?rev=8350b6bf86f603ad55441bf82d05feb51f4fd383#8350b6bf86f603ad55441bf82d05feb51f4fd383"
+
+[[package]]
 name = "adler2"
 version = "2.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -149,7 +154,7 @@ name = "dataflow-manager"
 version = "0.1.0"
 dependencies = [
  "makepad-flow",
- "makepad-widgets",
+ "makepad-widgets 1.0.0 (git+https://github.com/makepad/makepad?branch=dev)",
  "serde",
  "serde_json",
 ]
@@ -192,7 +197,7 @@ dependencies = [
  "dataflow-manager",
  "dora-studio-client",
  "dora-studio-widgets",
- "makepad-widgets",
+ "makepad-widgets 1.0.0 (git+https://github.com/makepad/makepad?branch=dev)",
  "serde",
  "serde_json",
  "telemetry-dashboard",
@@ -204,7 +209,7 @@ name = "dora-studio-widgets"
 version = "0.1.0"
 dependencies = [
  "dora-studio-client",
- "makepad-widgets",
+ "makepad-widgets 1.0.0 (git+https://github.com/makepad/makepad?branch=dev)",
 ]
 
 [[package]]
@@ -658,7 +663,7 @@ name = "makepad-charts"
 version = "0.1.0"
 source = "git+https://github.com/mofa-org/makepad-chart#7fe9fc2f810ed1f23b1646472b186a5f5037ac8e"
 dependencies = [
- "makepad-widgets",
+ "makepad-widgets 1.0.0 (git+https://github.com/makepad/makepad?branch=dev)",
 ]
 
 [[package]]
@@ -666,8 +671,17 @@ name = "makepad-derive-live"
 version = "1.0.0"
 source = "git+https://github.com/makepad/makepad?branch=dev#8350b6bf86f603ad55441bf82d05feb51f4fd383"
 dependencies = [
- "makepad-live-id",
- "makepad-micro-proc-macro",
+ "makepad-live-id 1.0.0 (git+https://github.com/makepad/makepad?branch=dev)",
+ "makepad-micro-proc-macro 1.0.0 (git+https://github.com/makepad/makepad?branch=dev)",
+]
+
+[[package]]
+name = "makepad-derive-live"
+version = "1.0.0"
+source = "git+https://github.com/makepad/makepad?rev=8350b6bf86f603ad55441bf82d05feb51f4fd383#8350b6bf86f603ad55441bf82d05feb51f4fd383"
+dependencies = [
+ "makepad-live-id 1.0.0 (git+https://github.com/makepad/makepad?rev=8350b6bf86f603ad55441bf82d05feb51f4fd383)",
+ "makepad-micro-proc-macro 1.0.0 (git+https://github.com/makepad/makepad?rev=8350b6bf86f603ad55441bf82d05feb51f4fd383)",
 ]
 
 [[package]]
@@ -675,7 +689,15 @@ name = "makepad-derive-wasm-bridge"
 version = "1.0.0"
 source = "git+https://github.com/makepad/makepad?branch=dev#8350b6bf86f603ad55441bf82d05feb51f4fd383"
 dependencies = [
- "makepad-micro-proc-macro",
+ "makepad-micro-proc-macro 1.0.0 (git+https://github.com/makepad/makepad?branch=dev)",
+]
+
+[[package]]
+name = "makepad-derive-wasm-bridge"
+version = "1.0.0"
+source = "git+https://github.com/makepad/makepad?rev=8350b6bf86f603ad55441bf82d05feb51f4fd383#8350b6bf86f603ad55441bf82d05feb51f4fd383"
+dependencies = [
+ "makepad-micro-proc-macro 1.0.0 (git+https://github.com/makepad/makepad?rev=8350b6bf86f603ad55441bf82d05feb51f4fd383)",
 ]
 
 [[package]]
@@ -683,8 +705,17 @@ name = "makepad-derive-widget"
 version = "1.0.0"
 source = "git+https://github.com/makepad/makepad?branch=dev#8350b6bf86f603ad55441bf82d05feb51f4fd383"
 dependencies = [
- "makepad-live-id",
- "makepad-micro-proc-macro",
+ "makepad-live-id 1.0.0 (git+https://github.com/makepad/makepad?branch=dev)",
+ "makepad-micro-proc-macro 1.0.0 (git+https://github.com/makepad/makepad?branch=dev)",
+]
+
+[[package]]
+name = "makepad-derive-widget"
+version = "1.0.0"
+source = "git+https://github.com/makepad/makepad?rev=8350b6bf86f603ad55441bf82d05feb51f4fd383#8350b6bf86f603ad55441bf82d05feb51f4fd383"
+dependencies = [
+ "makepad-live-id 1.0.0 (git+https://github.com/makepad/makepad?rev=8350b6bf86f603ad55441bf82d05feb51f4fd383)",
+ "makepad-micro-proc-macro 1.0.0 (git+https://github.com/makepad/makepad?rev=8350b6bf86f603ad55441bf82d05feb51f4fd383)",
 ]
 
 [[package]]
@@ -692,15 +723,35 @@ name = "makepad-draw"
 version = "1.0.0"
 source = "git+https://github.com/makepad/makepad?branch=dev#8350b6bf86f603ad55441bf82d05feb51f4fd383"
 dependencies = [
- "ab_glyph_rasterizer",
+ "ab_glyph_rasterizer 0.1.8 (git+https://github.com/makepad/makepad?branch=dev)",
  "fxhash",
- "makepad-html",
- "makepad-live-id",
- "makepad-platform",
- "makepad-rustybuzz",
- "makepad-vector",
+ "makepad-html 1.0.0 (git+https://github.com/makepad/makepad?branch=dev)",
+ "makepad-live-id 1.0.0 (git+https://github.com/makepad/makepad?branch=dev)",
+ "makepad-platform 1.0.0 (git+https://github.com/makepad/makepad?branch=dev)",
+ "makepad-rustybuzz 0.8.0 (git+https://github.com/makepad/makepad?branch=dev)",
+ "makepad-vector 1.0.0 (git+https://github.com/makepad/makepad?branch=dev)",
  "png",
- "sdfer",
+ "sdfer 0.2.1 (git+https://github.com/makepad/makepad?branch=dev)",
+ "ttf-parser",
+ "unicode-bidi",
+ "unicode-linebreak",
+ "unicode-segmentation",
+]
+
+[[package]]
+name = "makepad-draw"
+version = "1.0.0"
+source = "git+https://github.com/makepad/makepad?rev=8350b6bf86f603ad55441bf82d05feb51f4fd383#8350b6bf86f603ad55441bf82d05feb51f4fd383"
+dependencies = [
+ "ab_glyph_rasterizer 0.1.8 (git+https://github.com/makepad/makepad?rev=8350b6bf86f603ad55441bf82d05feb51f4fd383)",
+ "fxhash",
+ "makepad-html 1.0.0 (git+https://github.com/makepad/makepad?rev=8350b6bf86f603ad55441bf82d05feb51f4fd383)",
+ "makepad-live-id 1.0.0 (git+https://github.com/makepad/makepad?rev=8350b6bf86f603ad55441bf82d05feb51f4fd383)",
+ "makepad-platform 1.0.0 (git+https://github.com/makepad/makepad?rev=8350b6bf86f603ad55441bf82d05feb51f4fd383)",
+ "makepad-rustybuzz 0.8.0 (git+https://github.com/makepad/makepad?rev=8350b6bf86f603ad55441bf82d05feb51f4fd383)",
+ "makepad-vector 1.0.0 (git+https://github.com/makepad/makepad?rev=8350b6bf86f603ad55441bf82d05feb51f4fd383)",
+ "png",
+ "sdfer 0.2.1 (git+https://github.com/makepad/makepad?rev=8350b6bf86f603ad55441bf82d05feb51f4fd383)",
  "ttf-parser",
  "unicode-bidi",
  "unicode-linebreak",
@@ -712,15 +763,23 @@ name = "makepad-error-log"
 version = "1.0.0"
 source = "git+https://github.com/makepad/makepad?branch=dev#8350b6bf86f603ad55441bf82d05feb51f4fd383"
 dependencies = [
- "makepad-micro-serde",
+ "makepad-micro-serde 1.0.0 (git+https://github.com/makepad/makepad?branch=dev)",
+]
+
+[[package]]
+name = "makepad-error-log"
+version = "1.0.0"
+source = "git+https://github.com/makepad/makepad?rev=8350b6bf86f603ad55441bf82d05feb51f4fd383#8350b6bf86f603ad55441bf82d05feb51f4fd383"
+dependencies = [
+ "makepad-micro-serde 1.0.0 (git+https://github.com/makepad/makepad?rev=8350b6bf86f603ad55441bf82d05feb51f4fd383)",
 ]
 
 [[package]]
 name = "makepad-flow"
 version = "0.1.0"
-source = "git+https://github.com/mofa-org/makepad-flow#bf5789bbff9989001077715a33e17284a307149c"
+source = "git+https://github.com/swar09/makepad-flow?branch=dev#cb55d3cc6eb0ab9a138f9aa651165e9f9cfd09b2"
 dependencies = [
- "makepad-widgets",
+ "makepad-widgets 1.0.0 (git+https://github.com/makepad/makepad?rev=8350b6bf86f603ad55441bf82d05feb51f4fd383)",
 ]
 
 [[package]]
@@ -728,7 +787,15 @@ name = "makepad-fonts-chinese-bold"
 version = "1.0.1"
 source = "git+https://github.com/makepad/makepad?branch=dev#8350b6bf86f603ad55441bf82d05feb51f4fd383"
 dependencies = [
- "makepad-platform",
+ "makepad-platform 1.0.0 (git+https://github.com/makepad/makepad?branch=dev)",
+]
+
+[[package]]
+name = "makepad-fonts-chinese-bold"
+version = "1.0.1"
+source = "git+https://github.com/makepad/makepad?rev=8350b6bf86f603ad55441bf82d05feb51f4fd383#8350b6bf86f603ad55441bf82d05feb51f4fd383"
+dependencies = [
+ "makepad-platform 1.0.0 (git+https://github.com/makepad/makepad?rev=8350b6bf86f603ad55441bf82d05feb51f4fd383)",
 ]
 
 [[package]]
@@ -736,7 +803,15 @@ name = "makepad-fonts-chinese-bold-2"
 version = "1.0.1"
 source = "git+https://github.com/makepad/makepad?branch=dev#8350b6bf86f603ad55441bf82d05feb51f4fd383"
 dependencies = [
- "makepad-platform",
+ "makepad-platform 1.0.0 (git+https://github.com/makepad/makepad?branch=dev)",
+]
+
+[[package]]
+name = "makepad-fonts-chinese-bold-2"
+version = "1.0.1"
+source = "git+https://github.com/makepad/makepad?rev=8350b6bf86f603ad55441bf82d05feb51f4fd383#8350b6bf86f603ad55441bf82d05feb51f4fd383"
+dependencies = [
+ "makepad-platform 1.0.0 (git+https://github.com/makepad/makepad?rev=8350b6bf86f603ad55441bf82d05feb51f4fd383)",
 ]
 
 [[package]]
@@ -744,7 +819,15 @@ name = "makepad-fonts-chinese-regular"
 version = "1.0.1"
 source = "git+https://github.com/makepad/makepad?branch=dev#8350b6bf86f603ad55441bf82d05feb51f4fd383"
 dependencies = [
- "makepad-platform",
+ "makepad-platform 1.0.0 (git+https://github.com/makepad/makepad?branch=dev)",
+]
+
+[[package]]
+name = "makepad-fonts-chinese-regular"
+version = "1.0.1"
+source = "git+https://github.com/makepad/makepad?rev=8350b6bf86f603ad55441bf82d05feb51f4fd383#8350b6bf86f603ad55441bf82d05feb51f4fd383"
+dependencies = [
+ "makepad-platform 1.0.0 (git+https://github.com/makepad/makepad?rev=8350b6bf86f603ad55441bf82d05feb51f4fd383)",
 ]
 
 [[package]]
@@ -752,7 +835,15 @@ name = "makepad-fonts-chinese-regular-2"
 version = "1.0.1"
 source = "git+https://github.com/makepad/makepad?branch=dev#8350b6bf86f603ad55441bf82d05feb51f4fd383"
 dependencies = [
- "makepad-platform",
+ "makepad-platform 1.0.0 (git+https://github.com/makepad/makepad?branch=dev)",
+]
+
+[[package]]
+name = "makepad-fonts-chinese-regular-2"
+version = "1.0.1"
+source = "git+https://github.com/makepad/makepad?rev=8350b6bf86f603ad55441bf82d05feb51f4fd383#8350b6bf86f603ad55441bf82d05feb51f4fd383"
+dependencies = [
+ "makepad-platform 1.0.0 (git+https://github.com/makepad/makepad?rev=8350b6bf86f603ad55441bf82d05feb51f4fd383)",
 ]
 
 [[package]]
@@ -760,7 +851,15 @@ name = "makepad-fonts-emoji"
 version = "1.0.0"
 source = "git+https://github.com/makepad/makepad?branch=dev#8350b6bf86f603ad55441bf82d05feb51f4fd383"
 dependencies = [
- "makepad-platform",
+ "makepad-platform 1.0.0 (git+https://github.com/makepad/makepad?branch=dev)",
+]
+
+[[package]]
+name = "makepad-fonts-emoji"
+version = "1.0.0"
+source = "git+https://github.com/makepad/makepad?rev=8350b6bf86f603ad55441bf82d05feb51f4fd383#8350b6bf86f603ad55441bf82d05feb51f4fd383"
+dependencies = [
+ "makepad-platform 1.0.0 (git+https://github.com/makepad/makepad?rev=8350b6bf86f603ad55441bf82d05feb51f4fd383)",
 ]
 
 [[package]]
@@ -769,16 +868,34 @@ version = "1.0.0"
 source = "git+https://github.com/makepad/makepad?branch=dev#8350b6bf86f603ad55441bf82d05feb51f4fd383"
 
 [[package]]
+name = "makepad-futures"
+version = "1.0.0"
+source = "git+https://github.com/makepad/makepad?rev=8350b6bf86f603ad55441bf82d05feb51f4fd383#8350b6bf86f603ad55441bf82d05feb51f4fd383"
+
+[[package]]
 name = "makepad-futures-legacy"
 version = "1.0.0"
 source = "git+https://github.com/makepad/makepad?branch=dev#8350b6bf86f603ad55441bf82d05feb51f4fd383"
+
+[[package]]
+name = "makepad-futures-legacy"
+version = "1.0.0"
+source = "git+https://github.com/makepad/makepad?rev=8350b6bf86f603ad55441bf82d05feb51f4fd383#8350b6bf86f603ad55441bf82d05feb51f4fd383"
 
 [[package]]
 name = "makepad-html"
 version = "1.0.0"
 source = "git+https://github.com/makepad/makepad?branch=dev#8350b6bf86f603ad55441bf82d05feb51f4fd383"
 dependencies = [
- "makepad-live-id",
+ "makepad-live-id 1.0.0 (git+https://github.com/makepad/makepad?branch=dev)",
+]
+
+[[package]]
+name = "makepad-html"
+version = "1.0.0"
+source = "git+https://github.com/makepad/makepad?rev=8350b6bf86f603ad55441bf82d05feb51f4fd383#8350b6bf86f603ad55441bf82d05feb51f4fd383"
+dependencies = [
+ "makepad-live-id 1.0.0 (git+https://github.com/makepad/makepad?rev=8350b6bf86f603ad55441bf82d05feb51f4fd383)",
 ]
 
 [[package]]
@@ -786,7 +903,15 @@ name = "makepad-http"
 version = "1.0.0"
 source = "git+https://github.com/makepad/makepad?branch=dev#8350b6bf86f603ad55441bf82d05feb51f4fd383"
 dependencies = [
- "makepad-script",
+ "makepad-script 1.0.0 (git+https://github.com/makepad/makepad?branch=dev)",
+]
+
+[[package]]
+name = "makepad-http"
+version = "1.0.0"
+source = "git+https://github.com/makepad/makepad?rev=8350b6bf86f603ad55441bf82d05feb51f4fd383#8350b6bf86f603ad55441bf82d05feb51f4fd383"
+dependencies = [
+ "makepad-script 1.0.0 (git+https://github.com/makepad/makepad?rev=8350b6bf86f603ad55441bf82d05feb51f4fd383)",
 ]
 
 [[package]]
@@ -800,9 +925,19 @@ name = "makepad-live-compiler"
 version = "1.0.0"
 source = "git+https://github.com/makepad/makepad?branch=dev#8350b6bf86f603ad55441bf82d05feb51f4fd383"
 dependencies = [
- "makepad-derive-live",
- "makepad-live-tokenizer",
- "makepad-math",
+ "makepad-derive-live 1.0.0 (git+https://github.com/makepad/makepad?branch=dev)",
+ "makepad-live-tokenizer 1.0.0 (git+https://github.com/makepad/makepad?branch=dev)",
+ "makepad-math 1.0.0 (git+https://github.com/makepad/makepad?branch=dev)",
+]
+
+[[package]]
+name = "makepad-live-compiler"
+version = "1.0.0"
+source = "git+https://github.com/makepad/makepad?rev=8350b6bf86f603ad55441bf82d05feb51f4fd383#8350b6bf86f603ad55441bf82d05feb51f4fd383"
+dependencies = [
+ "makepad-derive-live 1.0.0 (git+https://github.com/makepad/makepad?rev=8350b6bf86f603ad55441bf82d05feb51f4fd383)",
+ "makepad-live-tokenizer 1.0.0 (git+https://github.com/makepad/makepad?rev=8350b6bf86f603ad55441bf82d05feb51f4fd383)",
+ "makepad-math 1.0.0 (git+https://github.com/makepad/makepad?rev=8350b6bf86f603ad55441bf82d05feb51f4fd383)",
 ]
 
 [[package]]
@@ -810,7 +945,15 @@ name = "makepad-live-id"
 version = "1.0.0"
 source = "git+https://github.com/makepad/makepad?branch=dev#8350b6bf86f603ad55441bf82d05feb51f4fd383"
 dependencies = [
- "makepad-live-id-macros",
+ "makepad-live-id-macros 1.0.0 (git+https://github.com/makepad/makepad?branch=dev)",
+]
+
+[[package]]
+name = "makepad-live-id"
+version = "1.0.0"
+source = "git+https://github.com/makepad/makepad?rev=8350b6bf86f603ad55441bf82d05feb51f4fd383#8350b6bf86f603ad55441bf82d05feb51f4fd383"
+dependencies = [
+ "makepad-live-id-macros 1.0.0 (git+https://github.com/makepad/makepad?rev=8350b6bf86f603ad55441bf82d05feb51f4fd383)",
 ]
 
 [[package]]
@@ -818,7 +961,15 @@ name = "makepad-live-id-macros"
 version = "1.0.0"
 source = "git+https://github.com/makepad/makepad?branch=dev#8350b6bf86f603ad55441bf82d05feb51f4fd383"
 dependencies = [
- "makepad-micro-proc-macro",
+ "makepad-micro-proc-macro 1.0.0 (git+https://github.com/makepad/makepad?branch=dev)",
+]
+
+[[package]]
+name = "makepad-live-id-macros"
+version = "1.0.0"
+source = "git+https://github.com/makepad/makepad?rev=8350b6bf86f603ad55441bf82d05feb51f4fd383#8350b6bf86f603ad55441bf82d05feb51f4fd383"
+dependencies = [
+ "makepad-micro-proc-macro 1.0.0 (git+https://github.com/makepad/makepad?rev=8350b6bf86f603ad55441bf82d05feb51f4fd383)",
 ]
 
 [[package]]
@@ -826,9 +977,19 @@ name = "makepad-live-tokenizer"
 version = "1.0.0"
 source = "git+https://github.com/makepad/makepad?branch=dev#8350b6bf86f603ad55441bf82d05feb51f4fd383"
 dependencies = [
- "makepad-live-id",
- "makepad-math",
- "makepad-micro-serde",
+ "makepad-live-id 1.0.0 (git+https://github.com/makepad/makepad?branch=dev)",
+ "makepad-math 1.0.0 (git+https://github.com/makepad/makepad?branch=dev)",
+ "makepad-micro-serde 1.0.0 (git+https://github.com/makepad/makepad?branch=dev)",
+]
+
+[[package]]
+name = "makepad-live-tokenizer"
+version = "1.0.0"
+source = "git+https://github.com/makepad/makepad?rev=8350b6bf86f603ad55441bf82d05feb51f4fd383#8350b6bf86f603ad55441bf82d05feb51f4fd383"
+dependencies = [
+ "makepad-live-id 1.0.0 (git+https://github.com/makepad/makepad?rev=8350b6bf86f603ad55441bf82d05feb51f4fd383)",
+ "makepad-math 1.0.0 (git+https://github.com/makepad/makepad?rev=8350b6bf86f603ad55441bf82d05feb51f4fd383)",
+ "makepad-micro-serde 1.0.0 (git+https://github.com/makepad/makepad?rev=8350b6bf86f603ad55441bf82d05feb51f4fd383)",
 ]
 
 [[package]]
@@ -836,7 +997,15 @@ name = "makepad-math"
 version = "1.0.0"
 source = "git+https://github.com/makepad/makepad?branch=dev#8350b6bf86f603ad55441bf82d05feb51f4fd383"
 dependencies = [
- "makepad-micro-serde",
+ "makepad-micro-serde 1.0.0 (git+https://github.com/makepad/makepad?branch=dev)",
+]
+
+[[package]]
+name = "makepad-math"
+version = "1.0.0"
+source = "git+https://github.com/makepad/makepad?rev=8350b6bf86f603ad55441bf82d05feb51f4fd383#8350b6bf86f603ad55441bf82d05feb51f4fd383"
+dependencies = [
+ "makepad-micro-serde 1.0.0 (git+https://github.com/makepad/makepad?rev=8350b6bf86f603ad55441bf82d05feb51f4fd383)",
 ]
 
 [[package]]
@@ -845,12 +1014,26 @@ version = "1.0.0"
 source = "git+https://github.com/makepad/makepad?branch=dev#8350b6bf86f603ad55441bf82d05feb51f4fd383"
 
 [[package]]
+name = "makepad-micro-proc-macro"
+version = "1.0.0"
+source = "git+https://github.com/makepad/makepad?rev=8350b6bf86f603ad55441bf82d05feb51f4fd383#8350b6bf86f603ad55441bf82d05feb51f4fd383"
+
+[[package]]
 name = "makepad-micro-serde"
 version = "1.0.0"
 source = "git+https://github.com/makepad/makepad?branch=dev#8350b6bf86f603ad55441bf82d05feb51f4fd383"
 dependencies = [
- "makepad-live-id",
- "makepad-micro-serde-derive",
+ "makepad-live-id 1.0.0 (git+https://github.com/makepad/makepad?branch=dev)",
+ "makepad-micro-serde-derive 1.0.0 (git+https://github.com/makepad/makepad?branch=dev)",
+]
+
+[[package]]
+name = "makepad-micro-serde"
+version = "1.0.0"
+source = "git+https://github.com/makepad/makepad?rev=8350b6bf86f603ad55441bf82d05feb51f4fd383#8350b6bf86f603ad55441bf82d05feb51f4fd383"
+dependencies = [
+ "makepad-live-id 1.0.0 (git+https://github.com/makepad/makepad?rev=8350b6bf86f603ad55441bf82d05feb51f4fd383)",
+ "makepad-micro-serde-derive 1.0.0 (git+https://github.com/makepad/makepad?rev=8350b6bf86f603ad55441bf82d05feb51f4fd383)",
 ]
 
 [[package]]
@@ -858,13 +1041,26 @@ name = "makepad-micro-serde-derive"
 version = "1.0.0"
 source = "git+https://github.com/makepad/makepad?branch=dev#8350b6bf86f603ad55441bf82d05feb51f4fd383"
 dependencies = [
- "makepad-micro-proc-macro",
+ "makepad-micro-proc-macro 1.0.0 (git+https://github.com/makepad/makepad?branch=dev)",
+]
+
+[[package]]
+name = "makepad-micro-serde-derive"
+version = "1.0.0"
+source = "git+https://github.com/makepad/makepad?rev=8350b6bf86f603ad55441bf82d05feb51f4fd383#8350b6bf86f603ad55441bf82d05feb51f4fd383"
+dependencies = [
+ "makepad-micro-proc-macro 1.0.0 (git+https://github.com/makepad/makepad?rev=8350b6bf86f603ad55441bf82d05feb51f4fd383)",
 ]
 
 [[package]]
 name = "makepad-objc-sys"
 version = "1.0.0"
 source = "git+https://github.com/makepad/makepad?branch=dev#8350b6bf86f603ad55441bf82d05feb51f4fd383"
+
+[[package]]
+name = "makepad-objc-sys"
+version = "1.0.0"
+source = "git+https://github.com/makepad/makepad?rev=8350b6bf86f603ad55441bf82d05feb51f4fd383#8350b6bf86f603ad55441bf82d05feb51f4fd383"
 
 [[package]]
 name = "makepad-platform"
@@ -874,14 +1070,42 @@ dependencies = [
  "bitflags 2.11.0",
  "hilog-sys",
  "makepad-android-state",
- "makepad-error-log",
- "makepad-futures",
- "makepad-futures-legacy",
- "makepad-http",
+ "makepad-error-log 1.0.0 (git+https://github.com/makepad/makepad?branch=dev)",
+ "makepad-futures 1.0.0 (git+https://github.com/makepad/makepad?branch=dev)",
+ "makepad-futures-legacy 1.0.0 (git+https://github.com/makepad/makepad?branch=dev)",
+ "makepad-http 1.0.0 (git+https://github.com/makepad/makepad?branch=dev)",
  "makepad-jni-sys",
- "makepad-objc-sys",
- "makepad-shader-compiler",
- "makepad-wasm-bridge",
+ "makepad-objc-sys 1.0.0 (git+https://github.com/makepad/makepad?branch=dev)",
+ "makepad-shader-compiler 1.0.0 (git+https://github.com/makepad/makepad?branch=dev)",
+ "makepad-wasm-bridge 1.0.0 (git+https://github.com/makepad/makepad?branch=dev)",
+ "napi-derive-ohos",
+ "napi-ohos",
+ "ohos-sys",
+ "smallvec",
+ "wayland-client",
+ "wayland-egl",
+ "wayland-protocols",
+ "windows",
+ "windows-core",
+ "windows-targets 0.52.6",
+]
+
+[[package]]
+name = "makepad-platform"
+version = "1.0.0"
+source = "git+https://github.com/makepad/makepad?rev=8350b6bf86f603ad55441bf82d05feb51f4fd383#8350b6bf86f603ad55441bf82d05feb51f4fd383"
+dependencies = [
+ "bitflags 2.11.0",
+ "hilog-sys",
+ "makepad-android-state",
+ "makepad-error-log 1.0.0 (git+https://github.com/makepad/makepad?rev=8350b6bf86f603ad55441bf82d05feb51f4fd383)",
+ "makepad-futures 1.0.0 (git+https://github.com/makepad/makepad?rev=8350b6bf86f603ad55441bf82d05feb51f4fd383)",
+ "makepad-futures-legacy 1.0.0 (git+https://github.com/makepad/makepad?rev=8350b6bf86f603ad55441bf82d05feb51f4fd383)",
+ "makepad-http 1.0.0 (git+https://github.com/makepad/makepad?rev=8350b6bf86f603ad55441bf82d05feb51f4fd383)",
+ "makepad-jni-sys",
+ "makepad-objc-sys 1.0.0 (git+https://github.com/makepad/makepad?rev=8350b6bf86f603ad55441bf82d05feb51f4fd383)",
+ "makepad-shader-compiler 1.0.0 (git+https://github.com/makepad/makepad?rev=8350b6bf86f603ad55441bf82d05feb51f4fd383)",
+ "makepad-wasm-bridge 1.0.0 (git+https://github.com/makepad/makepad?rev=8350b6bf86f603ad55441bf82d05feb51f4fd383)",
  "napi-derive-ohos",
  "napi-ohos",
  "ohos-sys",
@@ -901,7 +1125,22 @@ source = "git+https://github.com/makepad/makepad?branch=dev#8350b6bf86f603ad5544
 dependencies = [
  "bitflags 1.3.2",
  "bytemuck",
- "makepad-ttf-parser",
+ "makepad-ttf-parser 0.21.1 (git+https://github.com/makepad/makepad?branch=dev)",
+ "smallvec",
+ "unicode-bidi-mirroring",
+ "unicode-ccc",
+ "unicode-properties",
+ "unicode-script",
+]
+
+[[package]]
+name = "makepad-rustybuzz"
+version = "0.8.0"
+source = "git+https://github.com/makepad/makepad?rev=8350b6bf86f603ad55441bf82d05feb51f4fd383#8350b6bf86f603ad55441bf82d05feb51f4fd383"
+dependencies = [
+ "bitflags 1.3.2",
+ "bytemuck",
+ "makepad-ttf-parser 0.21.1 (git+https://github.com/makepad/makepad?rev=8350b6bf86f603ad55441bf82d05feb51f4fd383)",
  "smallvec",
  "unicode-bidi-mirroring",
  "unicode-ccc",
@@ -914,10 +1153,22 @@ name = "makepad-script"
 version = "1.0.0"
 source = "git+https://github.com/makepad/makepad?branch=dev#8350b6bf86f603ad55441bf82d05feb51f4fd383"
 dependencies = [
- "makepad-error-log",
- "makepad-live-id",
- "makepad-math",
- "makepad-script-derive",
+ "makepad-error-log 1.0.0 (git+https://github.com/makepad/makepad?branch=dev)",
+ "makepad-live-id 1.0.0 (git+https://github.com/makepad/makepad?branch=dev)",
+ "makepad-math 1.0.0 (git+https://github.com/makepad/makepad?branch=dev)",
+ "makepad-script-derive 1.0.0 (git+https://github.com/makepad/makepad?branch=dev)",
+ "smallvec",
+]
+
+[[package]]
+name = "makepad-script"
+version = "1.0.0"
+source = "git+https://github.com/makepad/makepad?rev=8350b6bf86f603ad55441bf82d05feb51f4fd383#8350b6bf86f603ad55441bf82d05feb51f4fd383"
+dependencies = [
+ "makepad-error-log 1.0.0 (git+https://github.com/makepad/makepad?rev=8350b6bf86f603ad55441bf82d05feb51f4fd383)",
+ "makepad-live-id 1.0.0 (git+https://github.com/makepad/makepad?rev=8350b6bf86f603ad55441bf82d05feb51f4fd383)",
+ "makepad-math 1.0.0 (git+https://github.com/makepad/makepad?rev=8350b6bf86f603ad55441bf82d05feb51f4fd383)",
+ "makepad-script-derive 1.0.0 (git+https://github.com/makepad/makepad?rev=8350b6bf86f603ad55441bf82d05feb51f4fd383)",
  "smallvec",
 ]
 
@@ -926,7 +1177,15 @@ name = "makepad-script-derive"
 version = "1.0.0"
 source = "git+https://github.com/makepad/makepad?branch=dev#8350b6bf86f603ad55441bf82d05feb51f4fd383"
 dependencies = [
- "makepad-micro-proc-macro",
+ "makepad-micro-proc-macro 1.0.0 (git+https://github.com/makepad/makepad?branch=dev)",
+]
+
+[[package]]
+name = "makepad-script-derive"
+version = "1.0.0"
+source = "git+https://github.com/makepad/makepad?rev=8350b6bf86f603ad55441bf82d05feb51f4fd383#8350b6bf86f603ad55441bf82d05feb51f4fd383"
+dependencies = [
+ "makepad-micro-proc-macro 1.0.0 (git+https://github.com/makepad/makepad?rev=8350b6bf86f603ad55441bf82d05feb51f4fd383)",
 ]
 
 [[package]]
@@ -934,7 +1193,15 @@ name = "makepad-shader-compiler"
 version = "1.0.0"
 source = "git+https://github.com/makepad/makepad?branch=dev#8350b6bf86f603ad55441bf82d05feb51f4fd383"
 dependencies = [
- "makepad-live-compiler",
+ "makepad-live-compiler 1.0.0 (git+https://github.com/makepad/makepad?branch=dev)",
+]
+
+[[package]]
+name = "makepad-shader-compiler"
+version = "1.0.0"
+source = "git+https://github.com/makepad/makepad?rev=8350b6bf86f603ad55441bf82d05feb51f4fd383#8350b6bf86f603ad55441bf82d05feb51f4fd383"
+dependencies = [
+ "makepad-live-compiler 1.0.0 (git+https://github.com/makepad/makepad?rev=8350b6bf86f603ad55441bf82d05feb51f4fd383)",
 ]
 
 [[package]]
@@ -943,11 +1210,25 @@ version = "0.21.1"
 source = "git+https://github.com/makepad/makepad?branch=dev#8350b6bf86f603ad55441bf82d05feb51f4fd383"
 
 [[package]]
+name = "makepad-ttf-parser"
+version = "0.21.1"
+source = "git+https://github.com/makepad/makepad?rev=8350b6bf86f603ad55441bf82d05feb51f4fd383#8350b6bf86f603ad55441bf82d05feb51f4fd383"
+
+[[package]]
 name = "makepad-vector"
 version = "1.0.0"
 source = "git+https://github.com/makepad/makepad?branch=dev#8350b6bf86f603ad55441bf82d05feb51f4fd383"
 dependencies = [
- "makepad-ttf-parser",
+ "makepad-ttf-parser 0.21.1 (git+https://github.com/makepad/makepad?branch=dev)",
+ "resvg",
+]
+
+[[package]]
+name = "makepad-vector"
+version = "1.0.0"
+source = "git+https://github.com/makepad/makepad?rev=8350b6bf86f603ad55441bf82d05feb51f4fd383#8350b6bf86f603ad55441bf82d05feb51f4fd383"
+dependencies = [
+ "makepad-ttf-parser 0.21.1 (git+https://github.com/makepad/makepad?rev=8350b6bf86f603ad55441bf82d05feb51f4fd383)",
  "resvg",
 ]
 
@@ -956,8 +1237,17 @@ name = "makepad-wasm-bridge"
 version = "1.0.0"
 source = "git+https://github.com/makepad/makepad?branch=dev#8350b6bf86f603ad55441bf82d05feb51f4fd383"
 dependencies = [
- "makepad-derive-wasm-bridge",
- "makepad-live-id",
+ "makepad-derive-wasm-bridge 1.0.0 (git+https://github.com/makepad/makepad?branch=dev)",
+ "makepad-live-id 1.0.0 (git+https://github.com/makepad/makepad?branch=dev)",
+]
+
+[[package]]
+name = "makepad-wasm-bridge"
+version = "1.0.0"
+source = "git+https://github.com/makepad/makepad?rev=8350b6bf86f603ad55441bf82d05feb51f4fd383#8350b6bf86f603ad55441bf82d05feb51f4fd383"
+dependencies = [
+ "makepad-derive-wasm-bridge 1.0.0 (git+https://github.com/makepad/makepad?rev=8350b6bf86f603ad55441bf82d05feb51f4fd383)",
+ "makepad-live-id 1.0.0 (git+https://github.com/makepad/makepad?rev=8350b6bf86f603ad55441bf82d05feb51f4fd383)",
 ]
 
 [[package]]
@@ -965,16 +1255,35 @@ name = "makepad-widgets"
 version = "1.0.0"
 source = "git+https://github.com/makepad/makepad?branch=dev#8350b6bf86f603ad55441bf82d05feb51f4fd383"
 dependencies = [
- "makepad-derive-widget",
- "makepad-draw",
- "makepad-fonts-chinese-bold",
- "makepad-fonts-chinese-bold-2",
- "makepad-fonts-chinese-regular",
- "makepad-fonts-chinese-regular-2",
- "makepad-fonts-emoji",
- "makepad-html",
- "makepad-zune-jpeg",
- "makepad-zune-png",
+ "makepad-derive-widget 1.0.0 (git+https://github.com/makepad/makepad?branch=dev)",
+ "makepad-draw 1.0.0 (git+https://github.com/makepad/makepad?branch=dev)",
+ "makepad-fonts-chinese-bold 1.0.1 (git+https://github.com/makepad/makepad?branch=dev)",
+ "makepad-fonts-chinese-bold-2 1.0.1 (git+https://github.com/makepad/makepad?branch=dev)",
+ "makepad-fonts-chinese-regular 1.0.1 (git+https://github.com/makepad/makepad?branch=dev)",
+ "makepad-fonts-chinese-regular-2 1.0.1 (git+https://github.com/makepad/makepad?branch=dev)",
+ "makepad-fonts-emoji 1.0.0 (git+https://github.com/makepad/makepad?branch=dev)",
+ "makepad-html 1.0.0 (git+https://github.com/makepad/makepad?branch=dev)",
+ "makepad-zune-jpeg 0.3.17 (git+https://github.com/makepad/makepad?branch=dev)",
+ "makepad-zune-png 0.4.10 (git+https://github.com/makepad/makepad?branch=dev)",
+ "pulldown-cmark",
+ "unicode-segmentation",
+]
+
+[[package]]
+name = "makepad-widgets"
+version = "1.0.0"
+source = "git+https://github.com/makepad/makepad?rev=8350b6bf86f603ad55441bf82d05feb51f4fd383#8350b6bf86f603ad55441bf82d05feb51f4fd383"
+dependencies = [
+ "makepad-derive-widget 1.0.0 (git+https://github.com/makepad/makepad?rev=8350b6bf86f603ad55441bf82d05feb51f4fd383)",
+ "makepad-draw 1.0.0 (git+https://github.com/makepad/makepad?rev=8350b6bf86f603ad55441bf82d05feb51f4fd383)",
+ "makepad-fonts-chinese-bold 1.0.1 (git+https://github.com/makepad/makepad?rev=8350b6bf86f603ad55441bf82d05feb51f4fd383)",
+ "makepad-fonts-chinese-bold-2 1.0.1 (git+https://github.com/makepad/makepad?rev=8350b6bf86f603ad55441bf82d05feb51f4fd383)",
+ "makepad-fonts-chinese-regular 1.0.1 (git+https://github.com/makepad/makepad?rev=8350b6bf86f603ad55441bf82d05feb51f4fd383)",
+ "makepad-fonts-chinese-regular-2 1.0.1 (git+https://github.com/makepad/makepad?rev=8350b6bf86f603ad55441bf82d05feb51f4fd383)",
+ "makepad-fonts-emoji 1.0.0 (git+https://github.com/makepad/makepad?rev=8350b6bf86f603ad55441bf82d05feb51f4fd383)",
+ "makepad-html 1.0.0 (git+https://github.com/makepad/makepad?rev=8350b6bf86f603ad55441bf82d05feb51f4fd383)",
+ "makepad-zune-jpeg 0.3.17 (git+https://github.com/makepad/makepad?rev=8350b6bf86f603ad55441bf82d05feb51f4fd383)",
+ "makepad-zune-png 0.4.10 (git+https://github.com/makepad/makepad?rev=8350b6bf86f603ad55441bf82d05feb51f4fd383)",
  "pulldown-cmark",
  "unicode-segmentation",
 ]
@@ -988,17 +1297,42 @@ dependencies = [
 ]
 
 [[package]]
+name = "makepad-zune-core"
+version = "0.2.14"
+source = "git+https://github.com/makepad/makepad?rev=8350b6bf86f603ad55441bf82d05feb51f4fd383#8350b6bf86f603ad55441bf82d05feb51f4fd383"
+dependencies = [
+ "bitflags 2.11.0",
+]
+
+[[package]]
 name = "makepad-zune-jpeg"
 version = "0.3.17"
 source = "git+https://github.com/makepad/makepad?branch=dev#8350b6bf86f603ad55441bf82d05feb51f4fd383"
 dependencies = [
- "makepad-zune-core",
+ "makepad-zune-core 0.2.14 (git+https://github.com/makepad/makepad?branch=dev)",
+]
+
+[[package]]
+name = "makepad-zune-jpeg"
+version = "0.3.17"
+source = "git+https://github.com/makepad/makepad?rev=8350b6bf86f603ad55441bf82d05feb51f4fd383#8350b6bf86f603ad55441bf82d05feb51f4fd383"
+dependencies = [
+ "makepad-zune-core 0.2.14 (git+https://github.com/makepad/makepad?rev=8350b6bf86f603ad55441bf82d05feb51f4fd383)",
 ]
 
 [[package]]
 name = "makepad-zune-png"
 version = "0.4.10"
 source = "git+https://github.com/makepad/makepad?branch=dev#8350b6bf86f603ad55441bf82d05feb51f4fd383"
+dependencies = [
+ "zune-core",
+ "zune-inflate",
+]
+
+[[package]]
+name = "makepad-zune-png"
+version = "0.4.10"
+source = "git+https://github.com/makepad/makepad?rev=8350b6bf86f603ad55441bf82d05feb51f4fd383#8350b6bf86f603ad55441bf82d05feb51f4fd383"
 dependencies = [
  "zune-core",
  "zune-inflate",
@@ -1485,6 +1819,11 @@ version = "0.2.1"
 source = "git+https://github.com/makepad/makepad?branch=dev#8350b6bf86f603ad55441bf82d05feb51f4fd383"
 
 [[package]]
+name = "sdfer"
+version = "0.2.1"
+source = "git+https://github.com/makepad/makepad?rev=8350b6bf86f603ad55441bf82d05feb51f4fd383#8350b6bf86f603ad55441bf82d05feb51f4fd383"
+
+[[package]]
 name = "serde"
 version = "1.0.228"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1656,7 +1995,7 @@ version = "0.1.0"
 dependencies = [
  "dora-studio-client",
  "makepad-charts",
- "makepad-widgets",
+ "makepad-widgets 1.0.0 (git+https://github.com/makepad/makepad?branch=dev)",
 ]
 
 [[package]]

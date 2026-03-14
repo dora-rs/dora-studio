@@ -16,7 +16,7 @@ repository = "https://github.com/mofa-org/dora-studio"
 [workspace.dependencies]
 # UI Framework
 makepad-widgets = { git = "https://github.com/makepad/makepad", branch = "dev" }
-makepad-flow = { git = "https://github.com/mofa-org/makepad-flow" }
+makepad-flow = { git = "https://github.com/swar09/makepad-flow" , branch = "dev"}
 makepad-charts = { git = "https://github.com/mofa-org/makepad-chart" }
 
 # Serialization
