@@ -1,4 +1,6 @@
 #[cfg(not(target_arch = "wasm32"))]
+use crate::llm::{AnthropicLlmClient, Context, LlmClient};
+#[cfg(not(target_arch = "wasm32"))]
 use crate::tools::{execute_tool, get_dora_tools};
 #[cfg(target_arch = "wasm32")]
 use makepad_widgets::Cx;
@@ -160,75 +162,20 @@ pub fn submit_chat_request(messages: Vec<ChatMessage>) {
 }
 
 // ============================================================================
-// Claude API Request/Response Structures
+// WASM: minimal response types (simple API; no `llm` module on WASM)
 // ============================================================================
 
-/// Claude API request with tools (native only)
-#[cfg(not(target_arch = "wasm32"))]
-#[derive(Serialize)]
-struct ClaudeRequest {
-    model: String,
-    max_tokens: u32,
-    system: String,
-    messages: Vec<ClaudeMessage>,
-    #[serde(skip_serializing_if = "Vec::is_empty")]
-    tools: Vec<ClaudeTool>,
-}
-
-#[cfg(not(target_arch = "wasm32"))]
-#[derive(Serialize, Clone)]
-struct ClaudeTool {
-    name: String,
-    description: String,
-    input_schema: serde_json::Value,
-}
-
-#[cfg(not(target_arch = "wasm32"))]
-#[derive(Serialize, Clone)]
-struct ClaudeMessage {
-    role: String,
-    content: ClaudeMessageContent,
-}
-
-#[cfg(not(target_arch = "wasm32"))]
-#[derive(Serialize, Clone)]
-#[serde(untagged)]
-enum ClaudeMessageContent {
-    Text(String),
-    Blocks(Vec<ContentBlock>),
-}
-
-#[cfg(not(target_arch = "wasm32"))]
-#[derive(Serialize, Clone)]
-#[serde(tag = "type")]
-enum ContentBlock {
-    #[serde(rename = "text")]
-    Text { text: String },
-    #[serde(rename = "tool_use")]
-    ToolUse {
-        id: String,
-        name: String,
-        input: serde_json::Value,
-    },
-    #[serde(rename = "tool_result")]
-    ToolResult {
-        tool_use_id: String,
-        content: String,
-        #[serde(skip_serializing_if = "std::ops::Not::not")]
-        is_error: bool,
-    },
-}
-
-/// Claude API response structure
+#[cfg(target_arch = "wasm32")]
 #[derive(Deserialize, Debug)]
 #[allow(dead_code)]
 struct ClaudeResponse {
     content: Vec<ClaudeResponseContent>,
     stop_reason: Option<String>,
     #[serde(default)]
-    usage: Option<Usage>,
+    usage: Option<WasmUsage>,
 }
 
+#[cfg(target_arch = "wasm32")]
 #[derive(Deserialize, Debug)]
 #[allow(dead_code)]
 struct ClaudeResponseContent {
@@ -244,18 +191,21 @@ struct ClaudeResponseContent {
     input: Option<serde_json::Value>,
 }
 
+#[cfg(target_arch = "wasm32")]
 #[derive(Deserialize, Debug)]
 #[allow(dead_code)]
-struct Usage {
+struct WasmUsage {
     input_tokens: u32,
     output_tokens: u32,
 }
 
+#[cfg(target_arch = "wasm32")]
 #[derive(Deserialize)]
 struct ClaudeErrorResponse {
     error: ClaudeErrorDetail,
 }
 
+#[cfg(target_arch = "wasm32")]
 #[derive(Deserialize)]
 struct ClaudeErrorDetail {
     message: String,
@@ -348,7 +298,7 @@ async fn call_claude_api_simple(messages: Vec<ChatMessage>) -> ChatResponse {
 // Native API Call Implementation with Tool Loop
 // ============================================================================
 
-/// Call Claude API with tools support - implements the agentic loop
+/// Call Claude API with tools — agentic loop via [`LlmClient`](crate::llm::LlmClient).
 #[cfg(not(target_arch = "wasm32"))]
 async fn call_claude_api_with_tools(messages: Vec<ChatMessage>) -> ChatResponse {
     let api_key = get_api_key();
@@ -357,34 +307,33 @@ async fn call_claude_api_with_tools(messages: Vec<ChatMessage>) -> ChatResponse 
         return ChatResponse::Error("Please enter your Claude API key in the header".to_string());
     }
 
-    let client = reqwest::Client::new();
+    let last_user = match messages.last() {
+        Some(m) if m.role == MessageRole::User => m.content.clone(),
+        _ => {
+            return ChatResponse::Error(
+                "Invalid conversation: last message must be from the user".to_string(),
+            );
+        }
+    };
 
-    // Convert tools to Claude format
-    let tools: Vec<ClaudeTool> = get_dora_tools()
-        .into_iter()
-        .map(|t| ClaudeTool {
-            name: t.name,
-            description: t.description,
-            input_schema: t.input_schema,
-        })
-        .collect();
+    let tools = get_dora_tools();
+    let client = AnthropicLlmClient::new(api_key);
 
-    // Convert initial messages to Claude format
-    let mut claude_messages: Vec<ClaudeMessage> = messages
-        .iter()
-        .map(|m| ClaudeMessage {
-            role: match m.role {
-                MessageRole::User => "user".to_string(),
-                MessageRole::Assistant => "assistant".to_string(),
-            },
-            content: ClaudeMessageContent::Text(m.content.clone()),
-        })
-        .collect();
+    let mut ctx = Context::from_prior_chat_messages(
+        SYSTEM_PROMPT,
+        "claude-sonnet-4-20250514",
+        4096,
+        &messages,
+    );
 
-    // Collect all text responses and tool executions
+    let mut agent = match client.chat(&mut ctx, &last_user, &tools).await {
+        Ok(a) => a,
+        Err(e) => return ChatResponse::Error(e.to_string()),
+    };
+
     let mut final_response = String::new();
-    let mut iteration = 0;
-    const MAX_ITERATIONS: u32 = 10; // Prevent infinite loops
+    let mut iteration = 0u32;
+    const MAX_ITERATIONS: u32 = 10;
 
     loop {
         iteration += 1;
@@ -394,156 +343,47 @@ async fn call_claude_api_with_tools(messages: Vec<ChatMessage>) -> ChatResponse 
             break;
         }
 
-        let request = ClaudeRequest {
-            model: "claude-sonnet-4-20250514".to_string(),
-            max_tokens: 4096,
-            system: SYSTEM_PROMPT.to_string(),
-            messages: claude_messages.clone(),
-            tools: tools.clone(),
-        };
-
-        eprintln!("[API] Sending HTTP request...");
-        let result = client
-            .post("https://api.anthropic.com/v1/messages")
-            .header("Content-Type", "application/json")
-            .header("x-api-key", &api_key)
-            .header("anthropic-version", "2023-06-01")
-            .json(&request)
-            .send()
-            .await;
-
-        let response = match result {
-            Ok(resp) => resp,
-            Err(e) => return ChatResponse::Error(format!("Network error: {}", e)),
-        };
-
-        let status = response.status();
-        let body = response.text().await.unwrap_or_default();
-
-        if !status.is_success() {
-            return match serde_json::from_str::<ClaudeErrorResponse>(&body) {
-                Ok(error_response) => {
-                    ChatResponse::Error(format!("API Error: {}", error_response.error.message))
-                }
-                Err(_) => ChatResponse::Error(format!("API Error ({}): {}", status, body)),
-            };
-        }
-
-        let claude_response: ClaudeResponse = match serde_json::from_str(&body) {
-            Ok(r) => r,
-            Err(e) => {
-                return ChatResponse::Error(format!(
-                    "Failed to parse response: {}\nBody: {}",
-                    e, body
-                ))
-            }
-        };
-
-        // Process response content
-        let mut tool_uses: Vec<(String, String, serde_json::Value)> = Vec::new();
-        let mut has_text = false;
-
-        for content in &claude_response.content {
-            match content.content_type.as_str() {
-                "text" => {
-                    if let Some(text) = &content.text {
-                        if !text.is_empty() {
-                            if !final_response.is_empty() {
-                                final_response.push_str("\n\n");
-                            }
-                            final_response.push_str(text);
-                            has_text = true;
-                        }
-                    }
-                }
-                "tool_use" => {
-                    if let (Some(id), Some(name), Some(input)) =
-                        (&content.id, &content.name, &content.input)
-                    {
-                        tool_uses.push((id.clone(), name.clone(), input.clone()));
-                    }
-                }
-                _ => {}
-            }
-        }
-
-        // Check if we should stop
-        let stop_reason = claude_response.stop_reason.as_deref().unwrap_or("");
-        if stop_reason == "end_turn" || (tool_uses.is_empty() && has_text) {
-            break;
-        }
-
-        // Execute tools if any
-        if !tool_uses.is_empty() {
-            // Build assistant message with tool uses
-            let tool_use_blocks: Vec<ContentBlock> = tool_uses
-                .iter()
-                .map(|(id, name, input)| ContentBlock::ToolUse {
-                    id: id.clone(),
-                    name: name.clone(),
-                    input: input.clone(),
-                })
-                .collect();
-
-            // Add any text that came with tool uses
-            let mut assistant_blocks: Vec<ContentBlock> = Vec::new();
-            for content in &claude_response.content {
-                if content.content_type == "text" {
-                    if let Some(text) = &content.text {
-                        if !text.is_empty() {
-                            assistant_blocks.push(ContentBlock::Text { text: text.clone() });
-                        }
-                    }
-                }
-            }
-            assistant_blocks.extend(tool_use_blocks);
-
-            claude_messages.push(ClaudeMessage {
-                role: "assistant".to_string(),
-                content: ClaudeMessageContent::Blocks(assistant_blocks),
-            });
-
-            // Execute tools and collect results
-            let mut tool_results: Vec<ContentBlock> = Vec::new();
-
-            for (id, name, input) in &tool_uses {
-                // Add tool execution info to response
+        if let Some(t) = &agent.text {
+            if !t.is_empty() {
                 if !final_response.is_empty() {
                     final_response.push_str("\n\n");
                 }
-                final_response.push_str(&format!("🔧 Executing: {}", name));
-
-                let result = execute_tool(name, id, input);
-
-                // Show result preview in final response
-                let preview = if result.content.len() > 200 {
-                    format!("{}...", &result.content[..200])
-                } else {
-                    result.content.clone()
-                };
-
-                if result.is_error {
-                    final_response.push_str(&format!("\n❌ Error: {}", preview));
-                } else {
-                    final_response.push_str(&format!("\n✅ Result: {}", preview));
-                }
-
-                tool_results.push(ContentBlock::ToolResult {
-                    tool_use_id: result.tool_use_id,
-                    content: result.content,
-                    is_error: result.is_error,
-                });
+                final_response.push_str(t);
             }
+        }
 
-            // Add tool results as user message
-            claude_messages.push(ClaudeMessage {
-                role: "user".to_string(),
-                content: ClaudeMessageContent::Blocks(tool_results),
-            });
-        } else {
-            // No tools and no clear end - break to avoid infinite loop
+        if agent.tool_calls.is_empty() {
             break;
         }
+
+        let mut pairs = Vec::new();
+        for call in &agent.tool_calls {
+            if !final_response.is_empty() {
+                final_response.push_str("\n\n");
+            }
+            final_response.push_str(&format!("🔧 Executing: {}", call.name));
+
+            let result = execute_tool(&call.name, &call.id, &call.arguments);
+
+            let preview = if result.content.len() > 200 {
+                format!("{}...", &result.content[..200])
+            } else {
+                result.content.clone()
+            };
+
+            if result.is_error {
+                final_response.push_str(&format!("\n❌ Error: {}", preview));
+            } else {
+                final_response.push_str(&format!("\n✅ Result: {}", preview));
+            }
+
+            pairs.push((call.clone(), result));
+        }
+
+        agent = match client.continue_with_results(&mut ctx, &pairs, &tools).await {
+            Ok(a) => a,
+            Err(e) => return ChatResponse::Error(e.to_string()),
+        };
     }
 
     if final_response.is_empty() {
@@ -556,6 +396,11 @@ async fn call_claude_api_with_tools(messages: Vec<ChatMessage>) -> ChatResponse 
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[cfg(not(target_arch = "wasm32"))]
+    use crate::llm::anthropic::{
+        ClaudeErrorResponse, ClaudeMessage, ClaudeMessageContent, ClaudeRequest, ClaudeResponse,
+    };
 
     // ============================================================================
     // ChatMessage Tests
@@ -659,9 +504,10 @@ mod tests {
     }
 
     // ============================================================================
-    // Claude Response Structure Tests
+    // Claude Response Structure Tests (native: wire types live in `llm::anthropic`)
     // ============================================================================
 
+    #[cfg(not(target_arch = "wasm32"))]
     #[test]
     fn test_claude_response_deserialization() {
         let json = r#"{"content":[{"type":"text","text":"Hello!"}]}"#;
@@ -670,6 +516,7 @@ mod tests {
         assert_eq!(response.content[0].text, Some("Hello!".to_string()));
     }
 
+    #[cfg(not(target_arch = "wasm32"))]
     #[test]
     fn test_claude_response_empty_content() {
         let json = r#"{"content":[]}"#;
@@ -677,6 +524,7 @@ mod tests {
         assert!(response.content.is_empty());
     }
 
+    #[cfg(not(target_arch = "wasm32"))]
     #[test]
     fn test_claude_error_response_deserialization() {
         let json = r#"{"error":{"message":"Invalid API key"}}"#;
