@@ -112,7 +112,7 @@ live_design! {
             }
         }
 
-        // Expandable response strip: typing + latest reply preview
+        // Expandable response strip: latest reply preview (shows “AI is typing…” while loading)
         response_panel = <View> {
             width: Fill, height: Fit
             flow: Down
@@ -120,12 +120,6 @@ live_design! {
             spacing: 6
             show_bg: true
             draw_bg: { color: #ffffff }
-
-            typing_indicator = <Label> {
-                width: Fill, height: Fit
-                draw_text: { color: #6b7280, text_style: { font_size: 13.0 } }
-                text: ""
-            }
 
             response_preview = <Label> {
                 width: Fill, height: Fit
@@ -351,17 +345,10 @@ impl ChatScreen {
         };
         self.view.label(ids!(status_label)).set_text(cx, &status);
 
-        let typing = if self.is_loading {
-            "AI is typing…"
-        } else {
-            ""
-        };
-        self.view.label(ids!(typing_indicator)).set_text(cx, typing);
-
-        let preview = if let Some(p) = self.last_assistant_preview() {
+        let preview = if self.is_loading {
+            "AI is typing…".to_string()
+        } else if let Some(p) = self.last_assistant_preview() {
             p
-        } else if self.is_loading {
-            "Awaiting reply…".to_string()
         } else {
             "Latest reply will appear here.".to_string()
         };
