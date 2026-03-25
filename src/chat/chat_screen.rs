@@ -61,69 +61,95 @@ live_design! {
         }
     }
 
-    // Loading indicator bubble
-    LoadingBubble = <View> {
-        width: Fill, height: Fit
-        flow: Right
-        align: { x: 0.0 }
-        padding: { left: 16, right: 60, top: 4, bottom: 4 }
-
-        <RoundedView> {
-            width: Fit, height: Fit
-            draw_bg: { color: (ASSISTANT_BUBBLE_COLOR) }
-            padding: { left: 16, right: 16, top: 10, bottom: 10 }
-
-            <Label> {
-                width: Fit, height: Fit
-                draw_text: {
-                    text_style: { font_size: 14.0 }
-                    color: #6b7280
-                    wrap: Word
-                }
-                text: "Thinking..."
-            }
-        }
-    }
-
     pub ChatScreen = {{ChatScreen}} {
         width: Fill, height: Fill
         flow: Down
         show_bg: true
         draw_bg: { color: (BG_COLOR) }
 
-        // Status bar
-        status_label = <Label> {
+        // Toolbar: status + history / reply toggles + clear
+        toolbar_row = <View> {
             width: Fill, height: Fit
-            padding: { left: 20, top: 8, bottom: 8 }
-            draw_text: { color: #6b7280, text_style: { font_size: 12.0 } }
-            text: "Ready"
+            flow: Right
+            padding: { left: 16, right: 16, top: 8, bottom: 4 }
+            spacing: 8
+            align: { y: 0.5 }
+
+            status_label = <Label> {
+                width: Fill, height: Fit
+                draw_text: { color: #6b7280, text_style: { font_size: 12.0 } }
+                text: "Ready"
+            }
+
+            history_toggle = <Button> {
+                width: Fit, height: Fit
+                text: "History ▾"
+            }
+
+            response_toggle = <Button> {
+                width: Fit, height: Fit
+                text: "Reply ▾"
+            }
+
+            clear_button = <Button> {
+                width: Fit, height: Fit
+                text: "Clear"
+            }
         }
 
-        // Messages area with PortalList for dynamic rendering
-        message_list = <PortalList> {
+        // Outer view stays Fill so collapsing the list does not lift the bottom bar.
+        history_panel = <View> {
             width: Fill, height: Fill
             flow: Down
-            auto_tail: true
 
-            UserBubble = <UserBubble> {}
-            AssistantBubble = <AssistantBubble> {}
-            LoadingBubble = <LoadingBubble> {}
+            message_list = <PortalList> {
+                width: Fill, height: Fill
+                flow: Down
+                auto_tail: true
+
+                UserBubble = <UserBubble> {}
+                AssistantBubble = <AssistantBubble> {}
+            }
         }
 
-        // Input area
-        <View> {
+        // Expandable response strip: latest reply preview (shows “AI is typing…” while loading)
+        response_panel = <View> {
+            width: Fill, height: Fit
+            flow: Down
+            padding: { left: 16, right: 16, top: 8, bottom: 8 }
+            spacing: 6
+            show_bg: true
+            draw_bg: { color: #ffffff }
+
+            response_preview = <Label> {
+                width: Fill, height: Fit
+                draw_text: { color: #1f2937, text_style: { font_size: 14.0 }, wrap: Word }
+                text: "Latest reply will appear here."
+            }
+        }
+
+        // Bottom bar: 💬, input (placeholder when empty), ↵
+        bottom_bar = <View> {
             width: Fill, height: 72
             show_bg: true
             draw_bg: { color: #ffffff }
             padding: { left: 16, right: 16, top: 12, bottom: 12 }
             flow: Right
-            spacing: 12
+            spacing: 10
             align: { y: 0.5 }
+
+            emoji_label = <Label> {
+                width: Fit, height: Fit
+                draw_text: { text_style: { font_size: 18.0 } }
+                text: "💬"
+            }
 
             message_input = <TextInput> {
                 width: Fill, height: 48
-                empty_text: "Type a message..."
+                empty_text: "Ask AI..."
+                padding: { left: 12, right: 12, top: 13, bottom: 13 }
                 draw_text: {
+                    text_style: { font_size: 14.0 }
                     color: #000000
                     uniform color_hover: #000000
                     uniform color_focus: #000000
@@ -133,8 +159,8 @@ live_design! {
             }
 
             send_button = <Button> {
-                width: 80, height: 48
-                text: "Send"
+                width: 52, height: 48
+                text: "↵"
             }
         }
     }
@@ -150,6 +176,12 @@ pub struct ChatScreen {
     is_loading: bool,
     #[rust]
     next_frame: NextFrame,
+    /// When true, message list is collapsed (height 0).
+    #[rust]
+    history_collapsed: bool,
+    /// When true, response panel is collapsed (height 0).
+    #[rust]
+    response_collapsed: bool,
 }
 
 impl Widget for ChatScreen {
@@ -179,9 +211,15 @@ impl Widget for ChatScreen {
     }
 
     fn draw_walk(&mut self, cx: &mut Cx2d, scope: &mut Scope, walk: Walk) -> DrawStep {
-        // Draw the view but handle PortalList specially
+        let mut drew_portal = false;
         while let Some(item) = self.view.draw_walk(cx, scope, walk).step() {
             if let Some(mut list) = item.as_portal_list().borrow_mut() {
+                self.draw_messages(cx, &mut list);
+                drew_portal = true;
+            }
+        }
+        if !drew_portal {
+            if let Some(mut list) = self.view.portal_list(ids!(message_list)).borrow_mut() {
                 self.draw_messages(cx, &mut list);
             }
         }
@@ -203,19 +241,35 @@ impl WidgetMatchEvent for ChatScreen {
         {
             self.send_message(cx);
         }
+
+        if self.view.button(ids!(clear_button)).clicked(actions) {
+            self.clear_chat(cx);
+        }
+
+        if self.view.button(ids!(history_toggle)).clicked(actions) {
+            self.history_collapsed = !self.history_collapsed;
+            self.update_display(cx);
+        }
+
+        if self.view.button(ids!(response_toggle)).clicked(actions) {
+            self.response_collapsed = !self.response_collapsed;
+            self.update_display(cx);
+        }
     }
 }
 
 impl ChatScreen {
     fn draw_messages(&mut self, cx: &mut Cx2d, list: &mut RefMut<PortalList>) {
-        // Calculate total items: messages + loading indicator if loading
-        let item_count = self.messages.len() + if self.is_loading { 1 } else { 0 };
+        if self.history_collapsed {
+            list.set_item_range(cx, 0, 0);
+            return;
+        }
 
+        let item_count = self.messages.len();
         list.set_item_range(cx, 0, item_count);
 
         while let Some(item_id) = list.next_visible_item(cx) {
             if item_id < self.messages.len() {
-                // Render actual message
                 let msg = &self.messages[item_id];
                 let template = match msg.role {
                     MessageRole::User => live_id!(UserBubble),
@@ -225,23 +279,95 @@ impl ChatScreen {
                 let item = list.item(cx, item_id, template);
                 item.label(ids!(label)).set_text(cx, &msg.content);
                 item.draw_all(cx, &mut Scope::empty());
-            } else if self.is_loading && item_id == self.messages.len() {
-                // Render loading indicator (only one, right after messages)
-                let item = list.item(cx, item_id, live_id!(LoadingBubble));
-                item.draw_all(cx, &mut Scope::empty());
             }
         }
     }
 
+    fn last_assistant_preview(&self) -> Option<String> {
+        for m in self.messages.iter().rev() {
+            if matches!(m.role, MessageRole::Assistant) {
+                let c = m.content.trim();
+                if c.is_empty() {
+                    continue;
+                }
+                const MAX: usize = 600;
+                if c.len() > MAX {
+                    return Some(format!("{}…", &c[..MAX]));
+                }
+                return Some(c.to_string());
+            }
+        }
+        None
+    }
+
+    fn sync_panel_heights(&mut self, cx: &mut Cx) {
+        if self.history_collapsed {
+            self.view
+                .view(ids!(message_list))
+                .apply_over(cx, live! { height: 0 });
+        } else {
+            self.view
+                .view(ids!(message_list))
+                .apply_over(cx, live! { height: Fill });
+        }
+
+        if self.response_collapsed {
+            self.view
+                .view(ids!(response_panel))
+                .apply_over(cx, live! { height: 0 });
+        } else {
+            self.view
+                .view(ids!(response_panel))
+                .apply_over(cx, live! { height: Fit });
+        }
+    }
+
+    fn update_toggle_labels(&mut self, cx: &mut Cx) {
+        let h = if self.history_collapsed {
+            "History ▸"
+        } else {
+            "History ▾"
+        };
+        let r = if self.response_collapsed {
+            "Reply ▸"
+        } else {
+            "Reply ▾"
+        };
+        self.view.button(ids!(history_toggle)).set_text(cx, h);
+        self.view.button(ids!(response_toggle)).set_text(cx, r);
+    }
+
     fn update_display(&mut self, cx: &mut Cx) {
-        // Update status label
         let status = if self.is_loading {
-            "Thinking...".to_string()
+            "Waiting for AI…".to_string()
         } else {
             format!("{} messages", self.messages.len())
         };
         self.view.label(ids!(status_label)).set_text(cx, &status);
+
+        let preview = if self.is_loading {
+            "AI is typing…".to_string()
+        } else if let Some(p) = self.last_assistant_preview() {
+            p
+        } else {
+            "Latest reply will appear here.".to_string()
+        };
+        self.view
+            .label(ids!(response_preview))
+            .set_text(cx, &preview);
+
+        self.sync_panel_heights(cx);
+        self.update_toggle_labels(cx);
+
+        self.view.portal_list(ids!(message_list)).redraw(cx);
         self.redraw(cx);
+    }
+
+    fn clear_chat(&mut self, cx: &mut Cx) {
+        self.messages.clear();
+        self.is_loading = false;
+        self.view.text_input(ids!(message_input)).set_text(cx, "");
+        self.update_display(cx);
     }
 
     fn send_message(&mut self, cx: &mut Cx) {
@@ -259,10 +385,8 @@ impl ChatScreen {
         input.set_text(cx, "");
         self.is_loading = true;
 
-        // Update display immediately
         self.update_display(cx);
 
-        // Start polling and send request
         self.next_frame = cx.new_next_frame();
         submit_chat_request(self.messages.clone());
     }
